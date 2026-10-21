@@ -161,6 +161,17 @@ def api_bq_search(
     return get_gcp().bigquery_vector_search(q_vec, top_k=top_k, dim=dim)
 
 
+@app.post("/api/gcp-sync")
+def api_gcp_sync(dim: int = Query(256)):
+    ret = get_retriever()
+    return get_gcp().sync_to_gcs_and_bigquery(ret.chunks, ret.emb_matrices[768], dim=dim)
+
+
+@app.post("/api/gcp-destroy")
+def api_gcp_destroy():
+    return get_gcp().destroy_cloud_resources()
+
+
 DASHBOARD_HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -584,6 +595,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             <input type="text" id="bq-query" value="How do I authenticate with the Sarvam AI API using api-subscription-key?" />
           </div>
           <button class="primary" onclick="runBqSearch()">Execute BigQuery VECTOR_SEARCH SQL</button>
+          <button class="primary" style="background:#059669;" onclick="runGcpSync()">Sync Local Index -> GCS & BigQuery</button>
+          <button class="primary" style="background:#dc2626;" onclick="runGcpDestroy()">Destroy Cloud Resources (GCS + BQ)</button>
         </div>
       </div>
       <div class="panel-box" style="margin-bottom: 20px;">
@@ -764,6 +777,20 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           <tbody>${rows}</tbody>
         </table>
       `;
+    }
+
+    async function runGcpSync() {
+      document.getElementById('bq-results').innerHTML = 'Provisioning GCS bucket & BigQuery dataset and uploading 256d MRL vectors...';
+      const res = await fetch('/api/gcp-sync?dim=256', { method: 'POST' });
+      const data = await res.json();
+      document.getElementById('bq-results').innerHTML = `<pre style="color:#34d399;">${JSON.stringify(data, null, 2)}</pre>`;
+    }
+
+    async function runGcpDestroy() {
+      document.getElementById('bq-results').innerHTML = 'Destroying GCP BigQuery dataset (genai-511910:sarvam_rag) & GCS bucket (gs://genai-511910-sarvam-rag)...';
+      const res = await fetch('/api/gcp-destroy', { method: 'POST' });
+      const data = await res.json();
+      document.getElementById('bq-results').innerHTML = `<pre style="color:#f87171;">${JSON.stringify(data, null, 2)}</pre>`;
     }
 
     window.addEventListener('DOMContentLoaded', async () => {

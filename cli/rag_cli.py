@@ -273,6 +273,40 @@ def cmd_chat(args: argparse.Namespace) -> None:
         console.print(Panel(Markdown(ans["answer"]), title=f"Answer ({ans['latency_ms']} ms)", border_style="green"))
 
 
+def cmd_destroy(args: argparse.Namespace) -> None:
+    import subprocess
+    console.print(
+        Panel.fit(
+            "[bold red]Teardown & Resource Cleanup (`destroy`)[/bold red]\n"
+            f"GCP Project: [yellow]{CONFIG.gcp_project_id}[/yellow]\n"
+            f"BigQuery Dataset: [cyan]{CONFIG.gcp_project_id}:{CONFIG.bq_dataset_id}[/cyan]\n"
+            f"GCS Bucket: [cyan]gs://{CONFIG.gcs_bucket_name}[/cyan]",
+            title="Phase 6 — Production Resource Teardown & Cost Cleanup",
+            border_style="red",
+        )
+    )
+    report = {}
+    if not args.skip_cloud:
+        gcp = GCPVectorPlatform()
+        cloud_res = gcp.destroy_cloud_resources()
+        report["cloud_teardown"] = cloud_res
+
+    if not args.skip_ui:
+        proc = subprocess.run(["pkill", "-f", "uvicorn ui.app:app"], capture_output=True, text=True)
+        report["ui_server_port_8090"] = "STOPPED" if proc.returncode == 0 else "NOT_RUNNING"
+
+    if args.purge_local_index:
+        removed = []
+        for f in CONFIG.index_dir.glob("*.npy"):
+            f.unlink()
+            removed.append(f.name)
+        report["local_index_purged"] = removed
+    else:
+        report["local_index_purged"] = "SKIPPED (kept pre-computed local MRL matrices; pass --purge-local-index to delete)"
+
+    console.print(Panel(json.dumps(report, indent=2), title="[bold green]✓ Teardown Complete[/bold green]", border_style="green"))
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="rag_cli",
@@ -282,17 +316,17 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_ing = sub.add_parser("ingest", help="Chunk sarvam-docs and build EmbeddingGemma 2 MRL & BM25 indices")
     p_ing.add_argument("--max-files", type=int, default=85, help="Max markdown files to index")
-    p_ing.add_argument("--max-chunks", type=int, default=180, help="Max chunks to encode")
-    p_ing.add_argument("--batch-size", type=int, default=16, help="Encoding batch size")
+    p_ing.add_argument("--max-chunks", type=int, default=350, help="Max chunks to encode")
+    p_ing.add_argument("--batch-size", type=int, default=4, help="Encoding batch size")
     p_ing.set_defaults(func=cmd_ingest)
 
     def add_query_arg(p: argparse.ArgumentParser, help_text: str) -> None:
         p.add_argument("pos_query", nargs="?", default=None, help=help_text)
         p.add_argument("-q", "--query", dest="opt_query", type=str, default=None, help=help_text)
 
-    p_srch = sub.add_parser("search", help="Search the Sarvam Docs index (dense, bm25, hybrid, mrl_funnel)")
+    p_srch = sub.add_parser("search", help="Search the Sarvam Docs index (dense, bm25, hybrid, mrl_funnel/funnel)")
     add_query_arg(p_srch, "Search query")
-    p_srch.add_argument("--mode", choices=["dense", "bm25", "hybrid", "mrl_funnel"], default="hybrid")
+    p_srch.add_argument("--mode", choices=["dense", "bm25", "hybrid", "mrl_funnel", "funnel"], default="hybrid")
     p_srch.add_argument("--dim", type=int, choices=[768, 512, 256, 128], default=768)
     p_srch.add_argument("--top-k", type=int, default=5)
     p_srch.add_argument("--prompt-name", type=str, default="QuestionAnswering")
@@ -301,11 +335,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_ask = sub.add_parser("ask", help="Retrieve + synthesize a grounded answer via GCP Vertex AI Gemini")
     add_query_arg(p_ask, "Developer question")
-    p_ask.add_argument("--mode", choices=["dense", "bm25", "hybrid", "mrl_funnel"], default="hybrid")
+    p_ask.add_argument("--mode", choices=["dense", "bm25", "hybrid", "mrl_funnel", "funnel"], default="hybrid")
     p_ask.add_argument("--dim", type=int, choices=[768, 512, 256, 128], default=768)
     p_ask.add_argument("--top-k", type=int, default=5)
     p_ask.add_argument("--prompt-name", type=str, default="QuestionAnswering")
-    p_ask.add_argument("--judge", action="store_true", help="Run Vertex AI LLM-as-a-Judge evaluation")
+    p_ask.add_argument("--judge", "--evaluate", dest="judge", action="store_true", help="Run Vertex AI LLM-as-a-Judge evaluation")
     p_ask.set_defaults(func=cmd_ask)
 
     p_mrl = sub.add_parser("mrl-benchmark", help="Compare Matryoshka dimensions (768d, 512d, 256d, 128d)")
@@ -330,10 +364,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_bq.set_defaults(func=cmd_bq_search)
 
     p_chat = sub.add_parser("chat", help="Interactive terminal RAG chat session")
-    p_chat.add_argument("--mode", choices=["dense", "bm25", "hybrid", "mrl_funnel"], default="hybrid")
+    p_chat.add_argument("--mode", choices=["dense", "bm25", "hybrid", "mrl_funnel", "funnel"], default="hybrid")
     p_chat.add_argument("--dim", type=int, choices=[768, 512, 256, 128], default=768)
     p_chat.add_argument("--top-k", type=int, default=5)
     p_chat.set_defaults(func=cmd_chat)
+
+    p_destroy = sub.add_parser("destroy", help="Destroy GCP Cloud Storage bucket, BigQuery dataset/table, and stop Web UI server")
+    p_destroy.add_argument("--skip-cloud", action="store_true", help="Skip deleting GCP Cloud Storage & BigQuery resources")
+    p_destroy.add_argument("--skip-ui", action="store_true", help="Skip stopping background Web UI server")
+    p_destroy.add_argument("--purge-local-index", action="store_true", help="Also delete local .npy vector index files")
+    p_destroy.set_defaults(func=cmd_destroy)
 
     return parser
 
@@ -341,6 +381,8 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
+    if getattr(args, "mode", None) == "funnel":
+        args.mode = "mrl_funnel"
     if hasattr(args, "opt_query") or hasattr(args, "pos_query"):
         args.query = getattr(args, "opt_query", None) or getattr(args, "pos_query", None)
         if not args.query:

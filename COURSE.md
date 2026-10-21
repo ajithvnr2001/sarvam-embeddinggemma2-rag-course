@@ -21,18 +21,21 @@ flowchart TB
         M4 --> M5["Module 05: Identifier-Aware BM25 &\nReciprocal Rank Fusion (RRF) Hybrid Search"]
     end
 
-    subgraph L3["Level 3: Advanced Multimodal & Cloud Production (Modules 6 - 10)"]
+    subgraph L3["Level 3: Advanced Multimodal & Cloud Production (Modules 6 - 11)"]
         M5 --> M6["Module 06: Multimodal 740M RAG\n(<|image|> Diagrams + <|audio|> 16kHz Speech)"]
         M6 --> M7["Module 07: Grounded Synthesis with\nGCP Vertex AI Gemini 2.5 Flash"]
         M7 --> M8["Module 08: Cloud Storage, BigQuery\nVECTOR_SEARCH SQL & Cloud Run"]
         M8 --> M9["Module 09: IR Benchmarking &\nVertex AI LLM-as-a-Judge Evaluation"]
         M9 --> M10["Module 10: Complete In-Depth\nCLI Version vs. Web UI Version Guide"]
+        M10 --> M11["Module 11: Production Resource Teardown,\nCost Governance & Clean Destroy"]
     end
 ```
 
 ---
 
-## Complete Module Index
+## Complete Module Index (Structured: Explanation → Practicals → Learnings → Destroy)
+
+> 🌱 **Want a single continuous textbook explaining every bit from Beginner to Production with plain-English analogies?** Start with **[`BEGINNER_TO_PRODUCTION_STEP_BY_STEP.md`](./BEGINNER_TO_PRODUCTION_STEP_BY_STEP.md)**.
 
 | Level | Module | Title & File Link | Core Code & Concepts Covered |
 | :--- | :---: | :--- | :--- |
@@ -46,6 +49,7 @@ flowchart TB
 | **Advanced** | **08** | [**Production Cloud RAG: GCS, BigQuery `VECTOR_SEARCH` & Cloud Run**](./course/08_gcp_bigquery_cloudrun_rag.md) | [`src/gcp_integration.py`](./src/gcp_integration.py), [`Dockerfile`](./Dockerfile) — `gs://genai-511910-sarvam-rag`, `genai-511910.sarvam_rag.docs_embeddings`, GoogleSQL `VECTOR_SEARCH` |
 | **Advanced** | **09** | [**End-to-End Evaluation, MRL Benchmarks & LLM-as-a-Judge**](./course/09_evaluation_benchmarking.md) | [`scripts/run_all_verifications.py`](./scripts/run_all_verifications.py), [`evaluation_report.json`](./data/artifacts/evaluation_report.json) — Hit@1, Recall@5, MRR@5, Vertex AI JSON Judge |
 | **All Levels** | **10** | [**Master Guide: In-Depth CLI Version vs. Web UI Version**](./course/10_cli_and_ui_master_guide.md) | [`cli/rag_cli.py`](./cli/rag_cli.py), [`ui/app.py`](./ui/app.py), [`CLI_VS_UI_GUIDE.md`](./CLI_VS_UI_GUIDE.md) — Side-by-side CLI & UI instructions for GCP, HF, GitHub, and our RAG Studio |
+| **Lifecycle** | **11** | [**Production Resource Teardown & Cost Cleanup (`destroy`)**](./course/11_teardown_and_cost_cleanup.md) | [`scripts/destroy_resources.sh`](./scripts/destroy_resources.sh), `python -m cli.rag_cli destroy`, Web UI `Destroy Cloud Resources` — Idempotent cleanup of BigQuery datasets, GCS buckets & local servers |
 
 ---
 

@@ -23,7 +23,7 @@ A production-grade **Beginner-to-Advanced Retrieval-Augmented Generation (RAG) E
 | **[`CLI_VS_UI_GUIDE.md`](./CLI_VS_UI_GUIDE.md)** | **Side-by-Side CLI vs. UI Handbook** (GCP CLI vs. Console UI, Hugging Face CLI vs. Web UI, GitHub CLI vs. Web UI, and RAG CLI vs. Web Studio UI) |
 | **[`data/artifacts/evaluation_report.json`](./data/artifacts/evaluation_report.json)** | Live verification metrics, MRL benchmarks, Multimodal cross-modal scores, and Vertex AI LLM-as-a-Judge grades |
 
-### 🎓 10-Module Curriculum (`course/`)
+### 🎓 11-Module Structural Curriculum (`course/`) — *Explanation → Practicals → Learnings → Destroy*
 
 1. **[Module 01 — Beginner Foundations: What is RAG & Why Embeddings Matter](./course/01_beginner_foundations.md)**
 2. **[Module 02 — Deep Dive into `google/embeddinggemma-2` Architecture](./course/02_embeddinggemma2_architecture.md)**
@@ -35,6 +35,7 @@ A production-grade **Beginner-to-Advanced Retrieval-Augmented Generation (RAG) E
 8. **[Module 08 — Enterprise Cloud Scale: GCP Cloud Storage, BigQuery `VECTOR_SEARCH` & Cloud Run](./course/08_gcp_bigquery_cloudrun_rag.md)**
 9. **[Module 09 — Production Evaluation: IR Metrics (`Recall@K`, `MRR`) & LLM-as-a-Judge](./course/09_evaluation_benchmarking.md)**
 10. **[Module 10 — Complete End-to-End CLI & Web UI Master Guide](./course/10_cli_and_ui_master_guide.md)**
+11. **[Module 11 — Production Resource Teardown, Cost Governance & Clean Destroy (`destroy`)](./course/11_teardown_and_cost_cleanup.md)**
 
 ---
 
@@ -166,7 +167,7 @@ VERTEX_GEMINI_MODEL=gemini-2.5-flash
 
 ---
 
-### 2. Option A: Run via the 8-Command Terminal CLI (`cli/rag_cli.py`)
+### 2. Option A: Run via the 9-Command Terminal CLI (`cli/rag_cli.py`)
 
 ```bash
 # 1. Ingest & chunk sarvam-docs and compute MRL embeddings (768d, 512d, 256d, 128d)
@@ -192,6 +193,11 @@ python -m cli.rag_cli bq-search "How do I authenticate with the Sarvam API?" --t
 
 # 8. Launch Interactive Multi-Turn RAG Terminal Chat
 python -m cli.rag_cli chat
+
+# 9. Destroy Cloud & Runtime Resources (Deletes BigQuery dataset + GCS bucket + Stops Web UI server)
+python -m cli.rag_cli destroy
+# Or run the standalone shell teardown & verification script:
+bash scripts/destroy_resources.sh
 ```
 
 ---

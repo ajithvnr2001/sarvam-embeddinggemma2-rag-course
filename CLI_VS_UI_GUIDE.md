@@ -244,4 +244,18 @@ uvicorn ui.app:app --host 0.0.0.0 --port 8090
 | **Tab 1** | **Grounded RAG & Vertex AI Studio** | Preset question pills, Search Strategy selector (`hybrid`, `mrl_funnel`, `dense`, `bm25`), MRL dimension selector (`768d`, `512d`, `256d`, `128d`), Task Prompt Prefix selector, Vertex AI `gemini-2.5-flash` answer panel with `[sarvam_XXXX]` citations, LLM-as-a-Judge `/5` score badges, and Retrieved Evidence Cards. |
 | **Tab 2** | **Matryoshka (MRL) Live Explorer** | Live 4-column comparison (`768d 1.0x`, `512d 1.5x`, `256d 3.0x`, `128d 6.0x`) showing bytes/vector savings, Top-1 match indicator, Top-K overlap %, and per-chunk cosine similarity. |
 | **Tab 3** | **Multimodal Lab (740M Text + Image + Audio)** | Cross-modal search across 4 visual API architecture PNG cards (`<|image|>`), 5 real 16kHz mono `.wav`/`.mp3` audio clips (`<|audio|>`), and 1 interleaved Text+Image+Audio record in a shared `768d` vector space. |
-| **Tab 4** | **GCP BigQuery Vector Search & Cloud Console** | One-click sync to `gs://genai-511910-sarvam-rag` + `genai-511910.sarvam_rag.docs_embeddings`, live BigQuery `VECTOR_SEARCH` query runner, and full GoogleSQL query inspector. |
+| **Tab 4** | **GCP BigQuery Vector Search & Cloud Console** | One-click **`Sync Local Index -> GCS & BigQuery`**, live BigQuery `VECTOR_SEARCH` query runner, full GoogleSQL query inspector, and one-click **`Destroy Cloud Resources (GCS + BQ)`** teardown button. |
+
+---
+
+## 7. Resource Teardown & Cost Cleanup (`destroy`) — CLI vs. Web UI
+
+To ensure **zero ongoing cloud storage or BigQuery costs** after finishing your hands-on labs:
+
+| Resource | CLI Version (`cli/rag_cli.py` / `scripts/destroy_resources.sh`) | Web UI Version (RAG Studio UI / GCP Console UI) |
+| :--- | :--- | :--- |
+| **All Project Cloud & Runtime Resources (One-Click)** | `python -m cli.rag_cli destroy`<br/>*(or `bash scripts/destroy_resources.sh`)* | Open `http://localhost:8090` $\rightarrow$ **Tab 4 (`GCP BigQuery Vector Search`)** $\rightarrow$ Click red **`Destroy Cloud Resources (GCS + BQ)`** button |
+| **BigQuery Dataset (`genai-511910:sarvam_rag`)** | `bq --location=us-central1 rm -r -f -d genai-511910:sarvam_rag` | [BigQuery Console](https://console.cloud.google.com/bigquery?project=genai-511910) $\rightarrow$ Expand `genai-511910` $\rightarrow$ Click `⋮` next to `sarvam_rag` $\rightarrow$ **Delete** |
+| **GCS Bucket (`gs://genai-511910-sarvam-rag`)** | `gcloud storage rm --recursive gs://genai-511910-sarvam-rag --project=genai-511910` | [Cloud Storage Browser](https://console.cloud.google.com/storage/browser?project=genai-511910) $\rightarrow$ Select `genai-511910-sarvam-rag` $\rightarrow$ **Delete** |
+| **Local Web Studio Server (Port `8090`)** | `pkill -f "uvicorn ui.app:app"` | Press `Ctrl+C` in the terminal running `uvicorn` |
+| **Local Pre-Computed `.npy` Index Matrices** | `python -m cli.rag_cli destroy --purge-local-index` | Delete `data/index/*.npy` in file explorer |

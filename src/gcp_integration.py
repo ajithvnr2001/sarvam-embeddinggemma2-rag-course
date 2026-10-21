@@ -222,3 +222,39 @@ ORDER BY distance ASC
             "latency_ms": elapsed_ms,
             "results": rows,
         }
+
+    def destroy_cloud_resources(self) -> Dict[str, Any]:
+        """
+        Safely destroy the GCP resources created by this RAG project so zero ongoing cloud storage
+        or BigQuery costs are incurred:
+        1. Delete BigQuery dataset & tables (`<project_id>:<dataset_id>`) via `bq rm -r -f -d`
+        2. Delete GCS bucket & objects (`gs://<bucket_name>`) via `gcloud storage rm --recursive`
+        """
+        t0 = time.time()
+        bq_ref = f"{self.project_id}:{self.dataset_id}"
+        bucket_uri = f"gs://{self.bucket_name}"
+
+        bq_proc = subprocess.run(
+            ["bq", f"--location={self.location}", "rm", "-r", "-f", "-d", bq_ref],
+            capture_output=True,
+            text=True,
+        )
+        bq_status = "DELETED" if bq_proc.returncode == 0 else f"NOT_FOUND_OR_ALREADY_DELETED ({bq_proc.stderr.strip() or bq_proc.stdout.strip()})"
+
+        gcs_proc = subprocess.run(
+            ["gcloud", "storage", "rm", "--recursive", bucket_uri, f"--project={self.project_id}"],
+            capture_output=True,
+            text=True,
+        )
+        gcs_status = "DELETED" if gcs_proc.returncode == 0 else f"NOT_FOUND_OR_ALREADY_DELETED ({gcs_proc.stderr.strip() or gcs_proc.stdout.strip()})"
+
+        elapsed_sec = round(time.time() - t0, 2)
+        return {
+            "status": "DESTROYED",
+            "project_id": self.project_id,
+            "bigquery_dataset": bq_ref,
+            "bigquery_status": bq_status,
+            "gcs_bucket": bucket_uri,
+            "gcs_status": gcs_status,
+            "elapsed_sec": elapsed_sec,
+        }

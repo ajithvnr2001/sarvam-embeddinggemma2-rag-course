@@ -1,0 +1,39 @@
+╭─ Phase 6 — Production Resource Teardown & Cost Cleanup ─╮
+│ Teardown & Resource Cleanup (`destroy`)                 │
+│ GCP Project: genai-511910                               │
+│ BigQuery Dataset: genai-511910:sarvam_rag               │
+│ GCS Bucket: gs://genai-511910-sarvam-rag                │
+╰─────────────────────────────────────────────────────────╯
+╭──────────────────────────── ✓ Teardown Complete ─────────────────────────────╮
+│ {                                                                            │
+│   "cloud_teardown": {                                                        │
+│     "status": "DESTROYED",                                                   │
+│     "project_id": "genai-511910",                                            │
+│     "bigquery_dataset": "genai-511910:sarvam_rag",                           │
+│     "bigquery_status": "DELETED",                                            │
+│     "gcs_bucket": "gs://genai-511910-sarvam-rag",                            │
+│     "gcs_status": "DELETED",                                                 │
+│     "elapsed_sec": 8.07                                                      │
+│   },                                                                         │
+│   "ui_server_port_8090": "NOT_RUNNING",                                      │
+│   "local_index_purged": "SKIPPED (kept pre-computed local MRL matrices; pass │
+│ --purge-local-index to delete)"                                              │
+│ }                                                                            │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+==================================================================
+ 🧹 Starting Teardown for GCP Project: genai-511910
+==================================================================
+[1/4] Deleting BigQuery Dataset & Vector Table (genai-511910:sarvam_rag)...
+  ✓ Deleted BigQuery dataset: genai-511910:sarvam_rag
+[2/4] Deleting GCS Bucket & Objects (gs://genai-511910-sarvam-rag)...
+  ℹ GCS bucket gs://genai-511910-sarvam-rag already deleted or not found.
+[3/4] Stopping background Web UI Studio server (uvicorn ui.app:app)...
+  ℹ Web UI server was not running.
+[4/4] Verifying zero remaining RAG cloud resources...
+  ✓ Verified: GCS bucket gs://genai-511910-sarvam-rag is completely removed.
+  ✓ Verified: BigQuery dataset genai-511910:sarvam_rag is completely removed.
+==================================================================
+ ✅ Teardown Complete! Zero ongoing GCS or BigQuery storage costs.
+    (To re-create cloud resources anytime, run: python -m cli.rag_cli gcp-sync)
+==================================================================

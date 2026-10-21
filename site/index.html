@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sarvam AI + google/embeddinggemma-2 — RAG Engineering from Scratch</title>
+  <meta name="description" content="5 Phases, 13 6-Beat Lessons: Learn RAG Engineering from scratch with Sarvam AI, google/embeddinggemma-2, Matryoshka Representation Learning (MRL), Hybrid BM25+RRF, Multimodal Audio/Image RAG, and GCP Vertex AI & BigQuery." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- KaTeX for Math Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+
+  <!-- Highlight.js for Code Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css" />
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+
+  <!-- Marked for Markdown Parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+
+  <!-- Mermaid for Architecture Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand" onclick="window.__setView('curriculum')">
+      <div class="brand-logo">RG</div>
+      <div class="brand-text">
+        <span class="brand-title">Sarvam AI × embeddinggemma-2</span>
+        <span class="brand-sub">RAG Engineering from Scratch · 5 Phases · 13 Lessons</span>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      <button class="nav-btn active" data-view="curriculum" onclick="window.__setView('curriculum')">📚 Curriculum (13)</button>
+      <button class="nav-btn" data-view="reader" onclick="window.__setView('reader')">📖 Lesson Reader &amp; Quiz</button>
+      <button class="nav-btn" data-view="cheatsheet" onclick="window.__setView('cheatsheet')">📋 Cheatsheet &amp; Roadmap</button>
+      <button class="nav-btn" data-view="textbook" onclick="window.__setView('textbook')">🔬 Deep-Dive Modules (10)</button>
+      <button class="nav-btn" data-view="studio" onclick="window.__setView('studio')">🎛️ Web Studio &amp; FinOps ($0)</button>
+    </nav>
+
+    <div class="top-actions">
+      <input id="search-input" class="search-input" type="search" placeholder="Search lessons, math, BM25, MRL..." />
+      <span id="progress-pill" class="progress-pill">✓ 0 / 13 Completed</span>
+      <button id="theme-btn" class="icon-btn" title="Toggle Dark/Light Theme">☀️ Light</button>
+      <a class="icon-btn" href="https://github.com/ajithvnr2001/sarvam-embeddinggemma2-rag-course" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </header>
+
+  <main id="app" class="container"></main>
+
+  <footer class="footer">
+    Sarvam AI + <code>google/embeddinggemma-2</code> + Google Cloud (Vertex AI &amp; BigQuery) RAG Engineering from Scratch &nbsp;·&nbsp;
+    <a href="https://github.com/ajithvnr2001/sarvam-embeddinggemma2-rag-course" target="_blank" rel="noopener">sarvam-embeddinggemma2-rag-course</a> &nbsp;·&nbsp;
+    <a href="https://github.com/ajithvnr2001/sarvam-docs/tree/main/rag-embeddinggemma2-course" target="_blank" rel="noopener">sarvam-docs</a>
+  </footer>
+
+  <script src="course-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

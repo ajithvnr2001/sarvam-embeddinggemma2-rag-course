@@ -5,6 +5,7 @@
 </p>
 
 <p align="center">
+  <a href="https://sarvam-rag-course.ajithvnr2001.workers.dev"><img src="https://img.shields.io/badge/Live%20Course%20Site-Cloudflare%20Workers-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Live Site" /></a>
   <img src="https://img.shields.io/badge/Phases-5%20(Beginner%20to%20Production)-2563EB?style=for-the-badge" alt="Phases" />
   <img src="https://img.shields.io/badge/Lessons-13%20(6--Beat%20Format)-7C3AED?style=for-the-badge" alt="Lessons" />
   <img src="https://img.shields.io/badge/Model-google%2Fembeddinggemma--2-FF9D00?style=for-the-badge&logo=huggingface&logoColor=white" alt="Hugging Face" />
@@ -13,6 +14,7 @@
 </p>
 
 <p align="center">
+  <a href="https://sarvam-rag-course.ajithvnr2001.workers.dev"><b>🌐 Live Interactive Course Website</b></a> &nbsp;·&nbsp;
   <a href="#run-local-code">Quickstart</a> &nbsp;·&nbsp;
   <a href="#choose-a-learning-path">Learning Paths</a> &nbsp;·&nbsp;
   <a href="#contents">All 5 Phases &amp; 13 Lessons</a> &nbsp;·&nbsp;

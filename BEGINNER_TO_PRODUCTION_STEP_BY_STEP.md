@@ -47,6 +47,14 @@ flowchart LR
   1. **Ingestion & Indexing (Offline)**: `Markdown Docs -> Chunks -> EmbeddingGemma 2 Vectors -> Index`.
   2. **Retrieval (Online, ~15 ms)**: `User Question -> Query Vector -> Top-5 Chunks`.
   3. **Grounded Generation (Online)**: `User Question + Top-5 Chunks -> Vertex AI Gemini -> Cited Answer`.
+- **The Core Mathematical Formula (Cosine Similarity on $L_2$-Normalized Vectors)**:
+  Given a query vector $\mathbf{q} \in \mathbb{R}^d$ and a document vector $\mathbf{d} \in \mathbb{R}^d$:
+
+$$
+\operatorname{CosineSimilarity}(\mathbf{q}, \mathbf{d}) = \frac{\mathbf{q} \cdot \mathbf{d}}{\lVert \mathbf{q} \rVert_2 \, \lVert \mathbf{d} \rVert_2} = \frac{\sum_{i=1}^{d} q_i d_i}{\sqrt{\sum_{i=1}^{d} q_i^2} \, \sqrt{\sum_{i=1}^{d} d_i^2}}
+$$
+
+  Because [`src/embedder.py`](./src/embedder.py) $L_2$-normalizes every vector to unit length ($\lVert \mathbf{q} \rVert_2 = \lVert \mathbf{d} \rVert_2 = 1$), Cosine Similarity simplifies to a single fast dot product $\mathbf{q} \cdot \mathbf{d} = \sum_{i=1}^{d} q_i d_i$.
 
 ### 🛠️ 2. Practicals (CLI & Web UI)
 - **Environment Setup (Run Once)**:
@@ -168,7 +176,10 @@ flowchart LR
   - **Dense Search (`EmbeddingGemma 2`)** excels at conceptual meaning.
   - **Okapi BM25 (`k1=1.5, b=0.75`)** excels at exact API identifiers (`api-subscription-key`, `bulbul:v3`, `24000Hz`).
   - **Reciprocal Rank Fusion (`RRF k=60`)** combines their rankings without needing score calibration:
-    $$\text{RRF}(d) = \frac{1}{60 + \text{rank}_{\text{Dense}}(d)} + \frac{1}{60 + \text{rank}_{\text{BM25}}(d)}$$
+
+$$
+\operatorname{RRF}(d) = \frac{w_{\text{dense}}}{60 + r_{\text{dense}}(d)} + \frac{w_{\text{bm25}}}{60 + r_{\text{bm25}}(d)}
+$$
 
 ### 🛠️ 2. Practicals (CLI & Web UI)
 - **Via CLI**:

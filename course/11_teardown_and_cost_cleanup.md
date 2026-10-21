@@ -144,3 +144,15 @@ If you want to verify or delete resources directly in the Google Cloud Console b
    - **$0.00/month** ongoing cloud storage cost when idle.
    - **Instant local RAG search** (`python -m cli.rag_cli search` / `ask` / `mrl-benchmark` / `multimodal`) with zero cloud storage dependencies.
    - **15-second re-provisioning** back to GCP BigQuery anytime via `python -m cli.rag_cli gcp-sync --dim 256`!
+
+---
+
+## 🧹 4. Resource Teardown Verification Checklist
+
+Before closing your cloud session, run this 3-line verification check to confirm `$0.00` active cloud footprint on `genai-511910`:
+
+```bash
+python -m cli.rag_cli destroy
+gcloud storage buckets describe gs://genai-511910-sarvam-rag --project=genai-511910 || echo "Verified: GCS bucket deleted"
+bq show genai-511910:sarvam_rag || echo "Verified: BigQuery dataset deleted"
+```

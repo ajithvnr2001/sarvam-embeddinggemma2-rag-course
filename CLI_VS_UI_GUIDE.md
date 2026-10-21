@@ -9,25 +9,27 @@
 2. [Google Cloud Platform (GCP): `gcloud` / `bq` CLI vs. Cloud Console Web UI](#2-google-cloud-platform-gcp-gcloud--bq-cli-vs-cloud-console-web-ui)
 3. [Hugging Face & `google/embeddinggemma-2`: CLI vs. Hub Web UI](#3-hugging-face--googleembeddinggemma-2-cli-vs-hub-web-ui)
 4. [GitHub & `sarvam-docs`: `git` / `gh` CLI vs. GitHub Web UI](#4-github--sarvam-docs-git--gh-cli-vs-github-web-ui)
-5. [RAG Engine CLI Version (`cli/rag_cli.py`) — All 8 Subcommands In-Depth](#5-rag-engine-cli-version-clirag_clipy--all-8-subcommands-in-depth)
+5. [RAG Engine CLI Version (`cli/rag_cli.py`) — All 9 Subcommands In-Depth](#5-rag-engine-cli-version-clirag_clipy--all-9-subcommands-in-depth)
 6. [RAG Studio Web UI Version (`ui/app.py`) — All 4 Interactive Tabs In-Depth](#6-rag-studio-web-ui-version-uiapppy--all-4-interactive-tabs-in-depth)
+7. [Resource Teardown & Cost Cleanup (`destroy`) — CLI vs. Web UI](#7-resource-teardown--cost-cleanup-destroy--cli-vs-web-ui)
 
 ---
 
 ## 1. Architecture Comparison: CLI vs. Web UI
 
-Both the **CLI (`cli/rag_cli.py`)** and the **Interactive Web Studio (`ui/app.py`)** call the exact same Python modules in [`src/`](file:///data/opencode/sarvam-rag-course/src):
+Both the **CLI (`cli/rag_cli.py`)** and the **Interactive Web Studio (`ui/app.py`)** call the exact same Python modules in [`src/`](./src):
 
-| Feature / Capability | CLI Version ([`cli/rag_cli.py`](file:///data/opencode/sarvam-rag-course/cli/rag_cli.py)) | Web UI Version ([`ui/app.py`](file:///data/opencode/sarvam-rag-course/ui/app.py)) |
+| Feature / Capability | CLI Version ([`cli/rag_cli.py`](./cli/rag_cli.py)) | Web UI Version ([`ui/app.py`](./ui/app.py)) |
 | :--- | :--- | :--- |
 | **Primary Interface** | Rich ANSI terminal tables, panels & interactive REPL | FastAPI + 4-Tab Browser Studio (`http://localhost:8090`) |
-| **Corpus Ingestion** | `python3 cli/rag_cli.py ingest` | Automatic pre-loaded index + `GET /api/status` |
+| **Corpus Ingestion** | `python -m cli.rag_cli ingest` | Automatic pre-loaded index + `GET /api/status` |
 | **Search Strategies** | `--mode {dense,bm25,hybrid,mrl_funnel}` | Tab 1 Dropdown (`Hybrid RRF`, `MRL Funnel`, `Dense`, `BM25`) |
 | **Matryoshka Dimensions** | `--dim {768,512,256,128}` + `mrl-benchmark` subcommand | Tab 1 Selector + Tab 2 (`Matryoshka Live Explorer` 4-column grid) |
-| **Grounded Vertex AI Answer** | `python3 cli/rag_cli.py ask --query "..." --judge` | Tab 1 (`Ask Vertex AI Gemini (RAG)` button + Judge score pills) |
-| **Multimodal 740M Search** | `python3 cli/rag_cli.py multimodal --query "..."` | Tab 3 (`Multimodal Lab`: Visual Cards + 16kHz Audio + Interleaved) |
-| **GCP GCS + BigQuery Sync** | `python3 cli/rag_cli.py gcp-sync --dim 256` | Tab 4 (`Sync Local Index -> GCS & BigQuery` button) |
-| **BigQuery `VECTOR_SEARCH`** | `python3 cli/rag_cli.py bq-search --query "..."` | Tab 4 (`Run BigQuery VECTOR_SEARCH` button + live SQL viewer) |
+| **Grounded Vertex AI Answer** | `python -m cli.rag_cli ask "..." --judge` | Tab 1 (`Ask Vertex AI Gemini (RAG)` button + Judge score pills) |
+| **Multimodal 740M Search** | `python -m cli.rag_cli multimodal "..."` | Tab 3 (`Multimodal Lab`: Visual Cards + 16kHz Audio + Interleaved) |
+| **GCP GCS + BigQuery Sync** | `python -m cli.rag_cli gcp-sync --dim 256` | Tab 4 (`Sync Local Index -> GCS & BigQuery` button) |
+| **BigQuery `VECTOR_SEARCH`** | `python -m cli.rag_cli bq-search "..."` | Tab 4 (`Run BigQuery VECTOR_SEARCH` button + live SQL viewer) |
+| **Resource Teardown (`destroy`)** | `python -m cli.rag_cli destroy` | Tab 4 (`Destroy Cloud Resources (GCS + BQ)` button) |
 
 ---
 
@@ -159,7 +161,7 @@ git push -u origin main
 
 ---
 
-## 5. RAG Engine CLI Version (`cli/rag_cli.py`) — All 8 Subcommands In-Depth
+## 5. RAG Engine CLI Version (`cli/rag_cli.py`) — All 9 Subcommands In-Depth
 
 ```bash
 cd /data/opencode/sarvam-rag-course
@@ -168,7 +170,7 @@ source .venv/bin/activate
 
 ### 5.1 `ingest` — Build the Chunks & Matryoshka Vector Index
 ```bash
-python3 cli/rag_cli.py ingest --max-files 35
+python -m cli.rag_cli ingest
 ```
 **What happens:**
 - Crawls `/data/opencode/sarvam/docs` + root guides (`README_TTS.md`, `TAMIL_API_GUIDE.md`, `HOW_IT_WAS_DONE.md`).
@@ -177,8 +179,8 @@ python3 cli/rag_cli.py ingest --max-files 35
 
 ### 5.2 `search` — Test Any Retrieval Strategy & MRL Dimension
 ```bash
-python3 cli/rag_cli.py search \
-  --query "Which Tamil speakers and audio sample rates work with bulbul:v4-flash?" \
+python -m cli.rag_cli search \
+  "Which Tamil speakers and audio sample rates work with bulbul:v4-flash?" \
   --mode hybrid \
   --dim 768 \
   --prompt-name QuestionAnswering \
@@ -187,8 +189,8 @@ python3 cli/rag_cli.py search \
 
 ### 5.3 `ask` — Grounded Synthesis with Vertex AI `gemini-2.5-flash` + LLM Judge
 ```bash
-python3 cli/rag_cli.py ask \
-  --query "How do I authenticate with the Sarvam AI API and what HTTP header is used?" \
+python -m cli.rag_cli ask \
+  "How do I authenticate with the Sarvam AI API and what HTTP header is used?" \
   --mode hybrid \
   --dim 768 \
   --top-k 4 \
@@ -197,35 +199,44 @@ python3 cli/rag_cli.py ask \
 
 ### 5.4 `mrl-benchmark` — Compare `768d`, `512d`, `256d`, `128d` Side-by-Side
 ```bash
-python3 cli/rag_cli.py mrl-benchmark \
-  --query "How do I generate Tamil speech using bulbul:v4-flash and what sample rates and speakers are supported?" \
+python -m cli.rag_cli mrl-benchmark \
+  "How do I generate Tamil speech using bulbul:v4-flash and what sample rates and speakers are supported?" \
   --top-k 5
 ```
 
 ### 5.5 `multimodal` — Cross-Modal Text $\rightarrow$ Image + 16kHz Audio Search (740M Model)
 ```bash
-python3 cli/rag_cli.py multimodal \
-  --query "continuous heavy rainfall storm sound effect audio" \
+python -m cli.rag_cli multimodal \
+  "continuous heavy rainfall storm sound effect audio" \
   --dim 768 \
   --top-k 4
 ```
 
 ### 5.6 `gcp-sync` — Upload Chunks & Vectors to GCS & Load BigQuery Table
 ```bash
-python3 cli/rag_cli.py gcp-sync --dim 256
+python -m cli.rag_cli gcp-sync --dim 256
 ```
 
 ### 5.7 `bq-search` — Execute Live BigQuery `VECTOR_SEARCH` SQL
 ```bash
-python3 cli/rag_cli.py bq-search \
-  --query "How do I authenticate with the Sarvam AI API using api-subscription-key?" \
+python -m cli.rag_cli bq-search \
+  "How do I authenticate with the Sarvam AI API using api-subscription-key?" \
   --dim 256 \
   --top-k 5
 ```
 
 ### 5.8 `chat` — Interactive Multi-Turn RAG REPL
 ```bash
-python3 cli/rag_cli.py chat --mode hybrid --dim 768
+python -m cli.rag_cli chat --mode hybrid --dim 768
+```
+
+### 5.9 `destroy` — Idempotent Teardown of Cloud & Local Runtime Resources
+```bash
+# Deletes BigQuery dataset (genai-511910:sarvam_rag), GCS bucket (gs://genai-511910-sarvam-rag), and stops Web UI server
+python -m cli.rag_cli destroy
+
+# Optional: Also purge local pre-computed .npy matrices
+python -m cli.rag_cli destroy --purge-local-index
 ```
 
 ---

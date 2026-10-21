@@ -1,41 +1,40 @@
-# Module 8: Production Cloud RAG on Google Cloud Platform (Cloud Storage, BigQuery `VECTOR_SEARCH`, and Cloud Run)
+# Module 08 (Advanced): Production Cloud RAG on Google Cloud Platform — Cloud Storage, BigQuery `VECTOR_SEARCH` & Cloud Run
 
-**Course Track:** Advanced — Cloud-Native Vector Databases & Serverless Deployment  
-**GCP Project:** `genai-511910` (`us-central1`)  
-**Implementation Reference:** [`src/gcp_integration.py`](file:///data/opencode/sarvam-rag-course/src/gcp_integration.py), [`Dockerfile`](file:///data/opencode/sarvam-rag-course/Dockerfile)
-
----
-
-## 1. Learning Objectives
-
-By the end of this module, you will be able to:
-1. Architect a serverless enterprise RAG pipeline on Google Cloud Platform (GCP) combining **Cloud Storage (GCS)**, **BigQuery Vector Search**, **Vertex AI (`gemini-2.5-flash`)**, and **Cloud Run**.
-2. Export local `google/embeddinggemma-2` Matryoshka (`256d` / `768d`) L2-normalized embeddings to newline-delimited JSON (`.jsonl`) with `ARRAY<FLOAT64>` columns.
-3. Load embeddings into Google BigQuery and execute serverless `VECTOR_SEARCH(..., distance_type => 'COSINE')` SQL queries joining vector similarity with metadata filtering.
-4. Perform every operation using **both** the **GCP CLI (`gcloud` & `bq`)** and the **Google Cloud Console Web UI**.
+> **Course Navigation**: [← Module 07: Vertex AI Grounded Generation](./07_vertex_ai_grounded_generation.md) | [Course Index (`COURSE.md`)](../COURSE.md) | [Next: Module 09 — Evaluation & Benchmarking →](./09_evaluation_benchmarking.md)  
+> **Level:** Advanced — Cloud-Native Vector Databases & Serverless Deployment  
+> **Estimated Time:** 50 minutes  
+> **GCP Project:** `genai-511910` (`us-central1`)  
+> **Code References:** [`src/gcp_integration.py`](../src/gcp_integration.py), [`Dockerfile`](../Dockerfile), [`scripts/destroy_resources.sh`](../scripts/destroy_resources.sh)
 
 ---
 
-## 2. Cloud Architecture on GCP (`genai-511910`)
+## 📖 1. Explanation: Serverless Cloud Vector Search on Google Cloud Platform
+
+### 1.1 Why Move from Local `.npy` Files to Google BigQuery `VECTOR_SEARCH`?
+
+In Modules 01–07, we stored our `google/embeddinggemma-2` Matryoshka vectors in local NumPy matrices (`data/index/embeddings_{768,512,256,128}.npy`). While local NumPy matrices are lightning-fast (`< 0.5 ms`) for a single container, enterprise production systems require:
+1. **Shared, Durable Cloud State:** Multiple stateless microservices or Cloud Run instances reading from one centralized vector store.
+2. **Relational SQL + Vector Pre/Post-Filtering:** Combining semantic vector search with structured SQL predicates (`WHERE category = 'speech-tts' AND has_code = TRUE`).
+3. **Zero Idle Infrastructure Cost:** Traditional dedicated vector database clusters charge $70–$300+/month even when zero queries are running. **Google BigQuery `VECTOR_SEARCH`** is 100% serverless—you pay only for bytes stored/scanned, and you can provision or destroy the entire dataset in seconds!
 
 ```mermaid
 flowchart LR
-    subgraph LocalOrCloudRun["Local Engine / Cloud Run Service"]
-        CH["Markdown Chunker\n(src/chunker.py)"] --> EG["EmbeddingGemma 2\n(768d / 256d MRL)"]
+    subgraph LocalOrCloudRun["1. Local Engine / Cloud Run"]
+        CH["Markdown Chunker<br/>(307 Chunks)"] --> EG["EmbeddingGemma 2<br/>(256d MRL Slice, 3x Smaller)"]
     end
 
-    subgraph GCPStorage["Google Cloud Storage"]
-        GCS["gs://genai-511910-sarvam-rag/\nbq_load/docs_embeddings_256d.jsonl"]
+    subgraph GCPStorage["2. Google Cloud Storage (GCS)"]
+        GCS["gs://genai-511910-sarvam-rag/<br/>bq_load/docs_embeddings_256d.jsonl"]
     end
 
-    subgraph GCPBigQuery["Google BigQuery (Dataset: sarvam_rag)"]
-        BQT["Table: docs_embeddings\n(embedding ARRAY<FLOAT64>)"]
-        BQS["SQL: VECTOR_SEARCH(\n  TABLE sarvam_rag.docs_embeddings,\n  'embedding', query_vec,\n  distance_type => 'COSINE'\n)"]
+    subgraph GCPBigQuery["3. Google BigQuery (Dataset: sarvam_rag)"]
+        BQT["Table: docs_embeddings<br/>(embedding ARRAY&lt;FLOAT64&gt;)"]
+        BQS["GoogleSQL: VECTOR_SEARCH(<br/>  TABLE sarvam_rag.docs_embeddings,<br/>  'embedding', TABLE query_vec,<br/>  distance_type => 'COSINE'<br/>)"]
         BQT --> BQS
     end
 
-    subgraph GCPVertex["Google Cloud Vertex AI"]
-        VAI["gemini-2.5-flash\nGrounded Synthesis + Citations"]
+    subgraph GCPVertex["4. Google Cloud Vertex AI"]
+        VAI["gemini-2.5-flash<br/>Grounded Synthesis + Citations"]
     end
 
     EG -->|"Upload JSONL"| GCS
@@ -43,96 +42,34 @@ flowchart LR
     BQS -->|"Top-K Chunks + Cosine Sim"| VAI
 ```
 
-### Why BigQuery `VECTOR_SEARCH` + Matryoshka `256d`?
-- **Zero-ops serverless scaling**: No dedicated vector database cluster to provision or pay for while idle.
-- **SQL + Vector Analytical Joins**: Filter or join by `category`, `has_code`, `doc_path`, or `char_count` in standard GoogleSQL before or after vector scoring.
-- **3x Faster & Cheaper Scans with MRL `256d`**: Storing EmbeddingGemma 2's L2-normalized `256d` Matryoshka slice inside `ARRAY<FLOAT64>` reduces BigQuery bytes scanned by **66.7%** compared to `768d` while retaining near-100% retrieval recall.
+---
+
+### 1.2 Mathematical Equivalence: BigQuery `COSINE` Distance vs. Inner Product
+
+In GoogleSQL `VECTOR_SEARCH(..., distance_type => 'COSINE')`, BigQuery returns a column named `distance` defined as the **Cosine Distance**:
+
+$$
+\operatorname{CosineDistance}(\mathbf{q}, \mathbf{d}) = 1 - \operatorname{CosineSimilarity}(\mathbf{q}, \mathbf{d}) = 1 - \frac{\mathbf{q} \cdot \mathbf{d}}{\lVert \mathbf{q} \rVert_2 \, \lVert \mathbf{d} \rVert_2} \in [0, 2]
+$$
+
+Therefore, sorting by `ORDER BY distance ASC` in BigQuery is mathematically identical to sorting by $\operatorname{CosineSimilarity}(\mathbf{q}, \mathbf{d})$ descending, and we recover the exact Cosine Similarity in SQL via:
+
+$$
+\operatorname{CosineSimilarity}(\mathbf{q}, \mathbf{d}) = 1.0 - \text{distance}
+$$
+
+#### Why Exporting `256d` Matryoshka Vectors Saves 66.7% BigQuery Cost
+BigQuery stores each vector as an `ARRAY<FLOAT64>` column (8 bytes per dimension):
+- **Full `768d` vector:** $768 \times 8\text{ B} = 6,144\text{ bytes/row}$.
+- **Matryoshka `256d` vector:** $256 \times 8\text{ B} = 2,048\text{ bytes/row}$ (**`3.0x` reduction** in storage and `VECTOR_SEARCH` scan bytes, with **100% Top-1 match** on our benchmark!).
 
 ---
 
-## 3. Step-by-Step: Cloud Storage & BigQuery Vector Search (CLI vs. UI)
-
-### Step 3.1: Create the Cloud Storage Bucket
-
-#### Option A: GCP CLI (`gcloud storage`)
-```bash
-# Verify active project
-gcloud config set project genai-511910
-
-# Create regional bucket in us-central1
-gcloud storage buckets create gs://genai-511910-sarvam-rag \
-  --project=genai-511910 \
-  --location=us-central1 \
-  --uniform-bucket-level-access
-```
-
-#### Option B: GCP Console Web UI
-1. Open the [Google Cloud Storage Browser](https://console.cloud.google.com/storage/browser?project=genai-511910).
-2. Click **+ CREATE** at the top bar.
-3. Enter bucket name: `genai-511910-sarvam-rag`.
-4. Under **Location type**, select **Region** and choose `us-central1 (Iowa)`.
-5. Under **Access control**, select **Uniform** and click **Create**.
-
----
-
-### Step 3.2: Upload Chunks & Matryoshka Embeddings and Load into BigQuery
-
-Our [`GCPVectorPlatform.sync_to_gcs_and_bigquery()`](file:///data/opencode/sarvam-rag-course/src/gcp_integration.py#L46-L118) formats each chunk and its L2-normalized embedding vector into a BigQuery-ready JSONL row:
-
-```json
-{
-  "chunk_id": "sarvam_0001",
-  "doc_path": "api-reference/authentication.md",
-  "url": "https://docs.sarvam.ai/api-reference-docs/authentication",
-  "title": "Authentication — API Key Header",
-  "section": "API Key Header",
-  "category": "api-core",
-  "has_code": true,
-  "char_count": 412,
-  "content": "All API requests to Sarvam AI require the `api-subscription-key` HTTP header...",
-  "embedding_dim": 256,
-  "embedding": [0.041821, -0.091204, 0.018442, "... 256 floats ..."]
-}
-```
-
-#### Option A: Using Our RAG CLI (`cli/rag_cli.py`) or `bq` CLI
-```bash
-# 1. Automated sync via our RAG CLI (uploads to GCS + loads BigQuery table)
-python3 cli/rag_cli.py gcp-sync --dim 256
-
-# Equivalent raw gcloud + bq CLI commands:
-gcloud storage cp data/artifacts/docs_embeddings_256d.jsonl \
-  gs://genai-511910-sarvam-rag/bq_load/docs_embeddings_256d.jsonl
-
-bq --location=us-central1 mk --dataset --if_not_exists genai-511910:sarvam_rag
-
-bq --location=us-central1 load \
-  --replace \
-  --source_format=NEWLINE_DELIMITED_JSON \
-  genai-511910:sarvam_rag.docs_embeddings \
-  gs://genai-511910-sarvam-rag/bq_load/docs_embeddings_256d.jsonl
-```
-
-#### Option B: Using GCP BigQuery Console Web UI OR Our RAG Studio Web UI
-- **In our Interactive RAG Studio Web UI (`http://localhost:8090`)**:
-  1. Click **Tab 4: GCP BigQuery Vector Search & Cloud Console**.
-  2. Select **BigQuery Embedding Dimension** (`256d (3x Compressed MRL)` or `768d (Full Native)`).
-  3. Click **Sync Local Index -> GCS & BigQuery** to trigger the live upload and load job.
-- **In the [GCP BigQuery Studio Web UI](https://console.cloud.google.com/bigquery?project=genai-511910)**:
-  1. In the Explorer pane, click the three dots next to `genai-511910` $\rightarrow$ **Create dataset**.
-  2. Set **Dataset ID** to `sarvam_rag`, Location to `us-central1`, and click **Create dataset**.
-  3. Click the three dots next to `sarvam_rag` $\rightarrow$ **Create table**.
-  4. Set **Create table from** to `Google Cloud Storage`, browse to `gs://genai-511910-sarvam-rag/bq_load/docs_embeddings_256d.jsonl`, set **File format** to `JSONL (Newline delimited JSON)`, set **Table name** to `docs_embeddings`, check **Auto-detect schema**, and click **Create table**.
-
----
-
-### Step 3.3: Execute Serverless `VECTOR_SEARCH` Queries in BigQuery
-
-Once loaded, BigQuery natively computes exact or ANN cosine distance over the `embedding` `ARRAY<FLOAT64>` column:
+### 1.3 Exact GoogleSQL `VECTOR_SEARCH` Query Executed by [`src/gcp_integration.py`](../src/gcp_integration.py)
 
 ```sql
 WITH query_vec AS (
-  SELECT [0.041821, -0.091204, /* ... 256d query vector from EmbeddingGemma 2 ... */] AS q_emb
+  SELECT [0.041821, -0.091204, /* ... 256 L2-normalized floats from EmbeddingGemma 2 ... */] AS q_emb
 )
 SELECT
   base.chunk_id,
@@ -142,8 +79,8 @@ SELECT
   base.doc_path,
   base.url,
   SUBSTR(base.content, 1, 500) AS snippet,
-  ROUND(1.0 - distance, 4) AS cosine_similarity,
-  ROUND(distance, 4) AS cosine_distance
+  ROUND(1.0 - distance, 5) AS cosine_similarity,
+  ROUND(distance, 5) AS cosine_distance
 FROM VECTOR_SEARCH(
   TABLE `genai-511910.sarvam_rag.docs_embeddings`,
   'embedding',
@@ -155,55 +92,97 @@ FROM VECTOR_SEARCH(
 ORDER BY distance ASC;
 ```
 
-#### Option A: Run from our RAG CLI
+---
+
+## 🛠️ 2. Practicals: Provision, Query & Deploy on GCP (CLI & Web UI)
+
+### 2.1 Step 1 — Provision GCS Bucket & Load BigQuery Vector Table (`gcp-sync`)
+
+#### Option A: Via Our Python RAG CLI (One Command)
 ```bash
-python3 cli/rag_cli.py bq-search \
-  --query "How do I authenticate with the Sarvam AI API using api-subscription-key?" \
-  --dim 256 --top-k 5
+cd /data/opencode/sarvam-rag-course
+source .venv/bin/activate
+
+# Creates gs://genai-511910-sarvam-rag, uploads 307 chunks (256d MRL), and loads genai-511910:sarvam_rag.docs_embeddings
+python -m cli.rag_cli gcp-sync --dim 256
 ```
 
-#### Option B: Run from our RAG Studio Web UI
-1. Open **Tab 4: GCP BigQuery Vector Search & Cloud Console** (`http://localhost:8090`).
-2. Enter your natural-language query and click **Run BigQuery VECTOR_SEARCH**.
-3. The UI encodes your query with `google/embeddinggemma-2`, executes the BigQuery SQL job on `genai-511910.sarvam_rag.docs_embeddings`, and displays both the ranked results and the exact executed GoogleSQL query.
+#### Option B: Via Raw `gcloud` & `bq` CLI Commands
+```bash
+gcloud storage buckets create gs://genai-511910-sarvam-rag \
+  --project=genai-511910 --location=us-central1 --uniform-bucket-level-access
+
+gcloud storage cp data/artifacts/docs_embeddings_256d.jsonl \
+  gs://genai-511910-sarvam-rag/bq_load/docs_embeddings_256d.jsonl
+
+bq --location=us-central1 mk --dataset --if_not_exists genai-511910:sarvam_rag
+
+bq --location=us-central1 load \
+  --replace --source_format=NEWLINE_DELIMITED_JSON \
+  genai-511910:sarvam_rag.docs_embeddings \
+  gs://genai-511910-sarvam-rag/bq_load/docs_embeddings_256d.jsonl
+```
+
+#### Option C: Via Interactive Web Studio UI (`http://localhost:8090`)
+1. Open **`http://localhost:8090`** and select **Tab 4 (`GCP BigQuery Vector Search`)**.
+2. Choose **`256d (3x Compressed MRL)`** and click the green **`Sync Local Index -> GCS & BigQuery`** button.
 
 ---
 
-## 4. Deploying the RAG Studio to Google Cloud Run (CLI vs. UI)
+### 2.2 Step 2 — Execute Serverless `VECTOR_SEARCH` SQL on BigQuery (`bq-search`)
 
-Our repository includes a production [`Dockerfile`](file:///data/opencode/sarvam-rag-course/Dockerfile) that packages the FastAPI RAG Studio, CLI, and pre-built index for Google Cloud Run.
-
-### Option A: Deploy via `gcloud run deploy` CLI
+#### Option A: Via CLI
 ```bash
-# Build container image in Cloud Build & push to Artifact Registry / GCR
-gcloud builds submit --tag gcr.io/genai-511910/sarvam-embeddinggemma2-rag:latest \
-  --project=genai-511910
+python -m cli.rag_cli bq-search \
+  "How do I authenticate with the Sarvam AI API using api-subscription-key?" \
+  --dim 256 --top-k 5
+```
 
-# Deploy serverless container to Cloud Run in us-central1
+#### Option B: Via Web Studio UI (`http://localhost:8090`)
+1. On **Tab 4 (`GCP BigQuery Vector Search`)**, enter your query and click **`Run BigQuery VECTOR_SEARCH`**.
+2. Inspect the live BigQuery results (`sarvam_0017` ranked #1 with `cosine_similarity = 0.88369`, `distance = 0.11631`) and the generated GoogleSQL query.
+
+---
+
+### 2.3 Step 3 — Optional Serverless Container Deployment to Google Cloud Run
+
+```bash
+# Build container image and deploy to Cloud Run (us-central1)
+gcloud builds submit --tag gcr.io/genai-511910/sarvam-embeddinggemma2-rag:latest --project=genai-511910
+
 gcloud run deploy sarvam-embeddinggemma2-rag \
   --image gcr.io/genai-511910/sarvam-embeddinggemma2-rag:latest \
-  --project=genai-511910 \
-  --region=us-central1 \
-  --memory=8Gi \
-  --cpu=4 \
-  --port=8080 \
+  --project=genai-511910 --region=us-central1 \
+  --memory=8Gi --cpu=4 --port=8080 \
   --set-env-vars="GCP_PROJECT_ID=genai-511910,GCP_LOCATION=us-central1" \
   --allow-unauthenticated
 ```
 
-### Option B: Deploy via Google Cloud Run Console Web UI
-1. Open the [Google Cloud Run Console](https://console.cloud.google.com/run?project=genai-511910).
-2. Click **+ CREATE SERVICE**.
-3. Select **Deploy one revision from an existing container image** (`gcr.io/genai-511910/sarvam-embeddinggemma2-rag:latest`) or **Continuously deploy from a repository** (connect `ajithvnr2001/sarvam-embeddinggemma2-rag-course`).
-4. Set **Service name** to `sarvam-embeddinggemma2-rag` and **Region** to `us-central1`.
-5. Under **Authentication**, choose **Allow unauthenticated invocations** (or require IAM authentication for internal teams).
-6. Expand **Container(s), Volumes, Networking, Security**:
-   - Set **Container port** to `8080`.
-   - Under **Capacity**, set **Memory** to `8 GiB` and **CPU** to `4` (to hold `google/embeddinggemma-2` comfortably in RAM).
-   - Under **Variables & Secrets**, add `GCP_PROJECT_ID=genai-511910` and `GCP_LOCATION=us-central1`.
-7. Click **Create** to launch your HTTPS Cloud Run endpoint.
+---
+
+## 🧠 3. Key Learnings & MIT Systems Takeaways
+
+1. **Matryoshka `256d` + BigQuery `ARRAY<FLOAT64>` Is a Cloud FinOps Multiplier:** Truncating from `768d` to `256d` and $L_2$ re-normalizing cuts cloud storage and BigQuery scan bytes by **3.0x** while returning the exact same Top-1 chunk (`sarvam_0017`, Cosine `0.88369`).
+2. **Ephemeral Cloud Storage Pattern:** Because local `data/index/*.npy` files are only `628 KB`, you can keep your cloud BigQuery dataset and GCS bucket **destroyed (`$0.00/month`)** when idle and re-provision them in **15 seconds** anytime with `python -m cli.rag_cli gcp-sync --dim 256`.
 
 ---
 
-## 5. Next Module
-Continue to **[Module 9: End-to-End RAG Evaluation, MRL Benchmarking & Vertex AI LLM-as-a-Judge](./09_evaluation_benchmarking.md)** to analyze the quantitative benchmark results from our live execution.
+## 🧹 4. Resource Teardown & Cost Cleanup (`destroy`)
+
+Always tear down your cloud bucket (`gs://genai-511910-sarvam-rag`) and BigQuery dataset (`genai-511910:sarvam_rag`) when you finish running BigQuery experiments:
+
+- **Via Python CLI:**
+  ```bash
+  python -m cli.rag_cli destroy
+  ```
+- **Via Standalone Bash Script (with `NotFound` verification):**
+  ```bash
+  bash scripts/destroy_resources.sh
+  ```
+- **Via Web Studio UI (`http://localhost:8090`):**
+  On **Tab 4 (`GCP BigQuery Vector Search`)**, click the red **`Destroy Cloud Resources (GCS + BQ)`** button.
+
+---
+
+## Next Module
+Proceed to **[Module 09: End-to-End RAG Evaluation, Matryoshka Benchmarking & Vertex AI LLM-as-a-Judge](./09_evaluation_benchmarking.md)**.

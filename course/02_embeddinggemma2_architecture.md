@@ -1,114 +1,153 @@
-# Module 02 (Beginner): Deep Dive into Google `EmbeddingGemma 2` Architecture
+# Module 02 (Beginner): Deep Dive into `google/embeddinggemma-2` Architecture, Selective Loading & Asymmetric Prompts
 
-**Level:** Beginner to Intermediate  
-**Estimated Time:** 45 minutes  
-**Model Card:** [`https://huggingface.co/google/embeddinggemma-2`](https://huggingface.co/google/embeddinggemma-2)  
-**Code Reference:** [`src/embedder.py`](../src/embedder.py)
+> **Course Navigation**: [← Module 01: RAG Foundations](./01_beginner_foundations.md) | [Course Index (`COURSE.md`)](../COURSE.md) | [Next: Module 03 — Corpus Chunking →](./03_sarvam_corpus_chunking.md)  
+> **Level:** Beginner to Intermediate  
+> **Estimated Time:** 40 minutes  
+> **Model Card:** [`https://huggingface.co/google/embeddinggemma-2`](https://huggingface.co/google/embeddinggemma-2)  
+> **Code Reference:** [`src/embedder.py`](../src/embedder.py)
 
 ---
 
-## 1. Architectural Anatomy of `google/embeddinggemma-2`
+## 📖 1. Explanation: Inside `google/embeddinggemma-2`
 
-Built by Google DeepMind on the **Gemma 4** foundation, **EmbeddingGemma 2** is a **740M-parameter native multimodal embedding model** that maps **text, source code, images, video, and audio** into a single shared **768-dimensional** vector space across **100+ languages** (including Indian languages like Tamil `ta-IN`, Hindi `hi-IN`, Telugu `te-IN`, Kannada `kn-IN`, and Malayalam `ml-IN`).
+### 1.1 Architectural Anatomy: A Modular 3-Tower + Bottleneck Projection Network
+
+**`google/embeddinggemma-2`** is Google's 2026 state-of-the-art open multimodal & multilingual bi-encoder embedding model built on the Gemma backbone (`Gemma3n` / `Gemma4` architecture family) and trained across **100+ languages** (including Indian languages such as Tamil `ta-IN`, Hindi `hi-IN`, Telugu `te-IN`, Kannada `kn-IN`, and Malayalam `ml-IN`).
+
+#### 💡 The Simple Analogy: A Universal Translator with Detachable Lenses
+Think of `google/embeddinggemma-2` as a camera body (**the 303M Text Backbone + Projection Head**) that comes with two optional snap-on lenses:
+- **Snap-On Lens 1:** A **170M Vision Encoder (`<|image|>`, `<|video|>`)** for reading diagrams and images.
+- **Snap-On Lens 2:** A **300M USM Audio Encoder (`<|audio|>`)** for listening to 16kHz speech and sound effects.
+
+When you are indexing pure text and code (`sarvam-docs` Markdown files), you can detach the Vision and Audio lenses (`modality_mode="text_only"`), cutting active memory and parameter count by more than **50%** while producing the **exact same 768-dimensional vectors**! When you need to index `.wav` audio or `.png` diagrams (Module 06), you attach all lenses (`modality_mode="multimodal"`, `740M` total parameters).
 
 ```mermaid
-flowchart TD
-    subgraph Encoders["Modular Input Encoders (Selectively Loadable)"]
-        T["Text & Code Input\n(262,144 Vocab Tokenizer)"]
-        I["Image / Video Frames\n(<|image|> / <|video|>)"] --> VE["Vision Encoder\n(170M Parameters)"]
-        A["Mono 16kHz Audio\n(<|audio|>)"] --> AE["Audio Encoder\n(300M Parameters\nGemma4Audio 12 Layers)"]
+flowchart LR
+    subgraph Encoders["1. Modality Towers (740M Total / 303M Text-Only)"]
+        T["Text & Code Backbone<br/>(24-Layer Bidirectional Gemma, d_model=768)"]
+        V["Vision Tower (170M)<br/>(<|image|> ~280 soft tokens)"]
+        A["Audio Tower (300M USM)<br/>(<|audio|> 25 tokens/sec @ 16kHz)"]
     end
 
-    T --> BB["Gemma 4 Transformer Backbone\n(270M Text Model = 130M Transformer + 140M Embedder)\n24 Layers | 512 Model Dim | 2048 Hidden Dim\n5:1 Local:Global GQA/MQA | 8,192 Context Window"]
-    VE --> BB
-    AE --> BB
+    subgraph Pooling["2. Sequence Aggregation"]
+        MP["Attention-Masked Mean Pooling<br/>Averaged over valid tokens (Up to 8,192 ctx)"]
+    end
 
-    BB --> Pool["1_Pooling: Mean Pooling\n(512d -> 768d Linear Projection)"]
-    Pool --> Norm["2_Normalize: L2 Normalization\n(Unit Hypersphere)"]
-    Norm --> MRL["Matryoshka Output Vector\n768d (Full) | 512d | 256d | 128d"]
-```
+    subgraph Head["3. Bottleneck Projection & MRL"]
+        D1["Dense_1 Linear Expansion<br/>(768 -> 3072)"]
+        D2["Dense_2 Linear Bottleneck<br/>(3072 -> 768)"]
+        NORM["L2 Normalization + MRL Slicing<br/>768d | 512d | 256d | 128d"]
+    end
 
-### Core Specifications Table
-
-| Architectural Component | Specification | Engineering Impact |
-| :--- | :--- | :--- |
-| **Total Parameters** | **740M** | Fits on laptops, edge servers, and CPU-only Cloud Run instances |
-| **Text Model** | **270M** (`130M` backbone + `140M` embedder) | Can be loaded standalone by disabling vision & audio encoders |
-| **Vision Encoder** | **170M** | Encodes images (`280 tokens/image`) and video (`140 tokens/frame` @ 1 FPS) |
-| **Audio Encoder** | **300M** (`gemma4_audio`, 12 layers, 1024 hidden) | Encodes 16kHz mono audio at **25 tokens/second** (up to ~327s in 8K window) |
-| **Transformer Layers** | **24 layers** (`model_dim=512`, `ffn_hidden=2048`) | 5:1 Local (1024 sliding window) to Global attention ratio |
-| **Attention Heads** | 4 Query Heads, 2 Local KV Heads / 1 Global KV Head | Grouped-Query / Multi-Query Attention (GQA/MQA) minimizes KV-cache RAM |
-| **Context Window** | **8,192 tokens** | 4x larger than EmbeddingGemma 1 (2,048 tokens) |
-| **Output Dimension** | **768d** (with MRL at **512d, 256d, 128d**) | Up to **6x reduction** in vector database RAM and storage |
-
----
-
-## 2. Selective Encoder Loading: Cut Memory by up to 63%
-
-One of the most practical engineering features of `google/embeddinggemma-2` is that its vision (`170M`) and audio (`300M`) encoders are modular. If your microservice only indexes text and code chunks, you can omit unused encoders via `config_kwargs`:
-
-| Active Modalities | `config_kwargs` Passed to `SentenceTransformer` | Active Parameters | RAM Savings |
-| :--- | :--- | :---: | :---: |
-| **Text + Code Only** | `{"vision_config": None, "audio_config": None}` | **270M** | **-63.5%** |
-| **Text + Image** | `{"audio_config": None}` | **440M** | **-40.5%** |
-| **Text + Audio** | `{"vision_config": None}` | **570M** | **-23.0%** |
-| **Full Multimodal** | `{}` | **740M** | Baseline |
-
-```python
-from sentence_transformers import SentenceTransformer
-import torch
-
-# Load 270M Text-Only configuration for fast document chunk ingestion
-text_embedder = SentenceTransformer(
-    "google/embeddinggemma-2",
-    model_kwargs={"torch_dtype": torch.bfloat16},
-    config_kwargs={"vision_config": None, "audio_config": None},
-)
+    T & V & A --> MP --> D1 --> D2 --> NORM
 ```
 
 ---
 
-## 3. Critical Numerical Precision Rule: NEVER Use `float16`!
+### 1.2 Mathematical Formulation of Mean Pooling & Linear Projection
+
+Let an input sequence of $T$ tokens pass through the 24 bidirectional Transformer layers of `google/embeddinggemma-2`, producing contextualized hidden states $\mathbf{H} = [\mathbf{h}_1, \mathbf{h}_2, \dots, \mathbf{h}_T]^\top \in \mathbb{R}^{T \times 768}$ and binary attention mask $m_t \in \lbrace 0, 1 \rbrace$.
+
+1. **Attention-Masked Mean Pooling ($\boldsymbol{\mu} \in \mathbb{R}^{768}$):**
+   Padding tokens ($m_t = 0$) are excluded so batching never alters a sequence's representation:
+
+$$
+\boldsymbol{\mu} = \frac{\sum_{t=1}^{T} m_t \, \mathbf{h}_t}{\max\left(\sum_{t=1}^{T} m_t, \; 1\right)} \in \mathbb{R}^{768}
+$$
+
+2. **Two-Layer Linear Bottleneck Projection ($\mathbf{z} \in \mathbb{R}^{768}$):**
+   The pooled vector $\boldsymbol{\mu}$ is projected through two bias-free linear transformations $\mathbf{W}_1 \in \mathbb{R}^{3072 \times 768}$ and $\mathbf{W}_2 \in \mathbb{R}^{768 \times 3072}$:
+
+$$
+\mathbf{z} = \mathbf{W}_2 \left(\mathbf{W}_1 \boldsymbol{\mu}\right) \in \mathbb{R}^{768}
+$$
+
+3. **Unit Hypersphere $L_2$ Normalization ($\hat{\mathbf{z}} \in \mathbb{S}^{767}$):**
+
+$$
+\hat{\mathbf{z}} = \frac{\mathbf{z}}{\lVert \mathbf{z} \rVert_2}
+$$
+
+---
+
+### 1.3 Asymmetric Task Instruction Prefixes (Why Queries $\neq$ Documents)
+
+A user question (*"How do I clone a voice?"*, 6 words) and an API documentation passage (*300 words of Markdown + JSON schema*) have completely different surface distributions. If we encoded both symmetrically without instructions, the model would try to match questions to other questions rather than questions to answers.
+
+`google/embeddinggemma-2` uses **Asymmetric Task Prefixes** to project short queries and long documents into aligned regions of $\mathbb{S}^{767}$:
+
+| Input Role | `prompt_name` in `src/embedder.py` | Exact String Prefix Prepended Before Tokenization | When to Use on `sarvam-docs` |
+| :--- | :--- | :--- | :--- |
+| **Document / Chunk** | `Retrieval-document` | `title: {DocTitle — Section} \| text: {ChunkBody}` | Indexing all 307 `sarvam-docs` chunks |
+| **Developer Question** | `QuestionAnswering` | `task: question answering \| query: {Question}` | Natural-language Q&A (`ask`, `search`) |
+| **Keyword / Topic Search** | `SearchQuery` | `task: search result \| query: {Query}` | Broad topic exploration & BigQuery search |
+| **Code / Endpoint Lookup** | `CodeRetrieval` | `task: code retrieval \| query: {CodeQuery}` | Searching for `cURL`, Python SDK, or `/voices/clone` |
+| **Claim Verification** | `FactChecking` | `task: fact checking \| query: {Claim}` | Auditing whether an API supports a specific parameter |
+
+---
+
+### 1.4 Precision Safety Rule: `float32` vs. `bfloat16` (Never `float16`!)
 
 > [!CAUTION]
-> **Do NOT run `google/embeddinggemma-2` in `torch.float16` (`fp16`)!**
-> EmbeddingGemma 2's internal activations exceed the dynamic range of IEEE 754 `float16` (max value `65,504`). Running in `float16` causes silent activation overflow or `NaN` embeddings without raising an exception.
->
-> **Always use `torch.bfloat16` (recommended, 8-bit exponent matching `float32`) or `torch.float32`.**
-
-```python
-import torch
-from sentence_transformers import SentenceTransformer
-
-dtype = torch.bfloat16
-model = SentenceTransformer(
-    "google/embeddinggemma-2",
-    model_kwargs={"torch_dtype": dtype},
-)
-```
+> **Critical Numerical Stability Rule:** Never run `google/embeddinggemma-2` in IEEE-754 `float16` (`fp16`)!
+> - `float16` has only **5 exponent bits** (max representable value $= 65,504$). Intermediate activations inside the 24 Gemma layers and the $768 \rightarrow 3072$ projection overflow `65,504`, producing `NaN` vectors or degraded cosine scores.
+> - **`bfloat16`** (8 exponent bits, same dynamic range as `float32`: $\sim 3.4 \times 10^{38}$) and **`float32`** never overflow.
+> - In [`src/embedder.py`](../src/embedder.py), our engine automatically uses `float32` on CPU and `bfloat16` on CUDA/TPU.
 
 ---
 
-## 4. Official Task Instruction Prefixes
+## 🛠️ 2. Practicals: Inspect Selective Loading & Compare Task Prefixes (CLI & Web UI)
 
-`google/embeddinggemma-2` uses task-steered instruction prefixes for **text** inputs (never prepend text prefixes to standalone image/audio inputs):
+### 2.1 Option A: Command-Line Interface (CLI) Practicals
 
-| Use Case | Task Type | `prompt_name` | Underlying Prefix String | Document Formatting Template |
-| :--- | :--- | :--- | :--- | :--- |
-| **Document / Web Search** | Asymmetric | `SearchQuery` | `task: search result \| query: {query}` | `title: {title} \| text: {content}` |
-| **Question Answering (RAG)** | Asymmetric | `QuestionAnswering` | `task: question answering \| query: {question}` | `title: {title} \| text: {passage}` |
-| **Code Search** | Asymmetric | `CodeRetrieval` | `task: code retrieval \| query: {query}` | `title: {filename} \| text: {code}` |
-| **Fact Verification** | Asymmetric | `FactChecking` | `task: fact checking \| query: {claim}` | `title: {title} \| text: {evidence}` |
-| **Classification** | Symmetric | `Classification` | `task: classification \| query: {content}` | Same prefix on all items |
-| **Clustering** | Symmetric | `Clustering` | `task: clustering \| query: {content}` | Same prefix on all items |
-| **Sentence Similarity** | Symmetric | `SentenceSimilarity` | `task: sentence similarity \| query: {content}` | Same prefix on all items |
+```bash
+cd /data/opencode/sarvam-rag-course
+source .venv/bin/activate
 
-> [!TIP]
-> Notice that calling `model.encode(doc, prompt_name="Document")` automatically prepends `title: none | text: `. When indexing `sarvam-docs`, every page has a real title and section heading (e.g. `Authentication — Bearer token`), so we format documents explicitly as:
-> `f"title: {title} — {section} | text: {content}"`
-> and call `model.encode(formatted_docs, normalize_embeddings=True)` **without** `prompt_name="Document"`.
+# 1. Verify Selective Text-Only Loading (303M params) and inspect query vs document prefixes
+python -c "
+import numpy as np
+from src.embedder import EmbeddingGemma2Engine
+
+engine = EmbeddingGemma2Engine(modality_mode='text_only')
+q_qa = engine.encode_query('How do I clone a voice in Sarvam AI?', prompt_name='QuestionAnswering')
+q_code = engine.encode_query('How do I clone a voice in Sarvam AI?', prompt_name='CodeRetrieval')
+doc = engine.encode_documents(['title: Instant Voice Cloning | text: POST https://api.sarvam.ai/voices/clone'])
+
+print('Query (QuestionAnswering) -> Doc Cosine:', float(q_qa @ doc[0]))
+print('Query (CodeRetrieval)     -> Doc Cosine:', float(q_code @ doc[0]))
+"
+
+# 2. Compare retrieval using QuestionAnswering vs CodeRetrieval prefixes via CLI
+python -m cli.rag_cli search "POST /text-to-speech bulbul:v3 python example" --prompt-name CodeRetrieval --mode dense
+python -m cli.rag_cli search "How does text to speech work in Sarvam?" --prompt-name QuestionAnswering --mode dense
+```
+
+### 2.2 Option B: Interactive Web Studio UI Practicals (`http://localhost:8090`)
+
+1. Open **`http://localhost:8090`** in your browser (`Tab 1: Grounded RAG Studio`).
+2. Locate the **Task Prefix (`EmbeddingGemma 2`)** dropdown.
+3. Run the same query with `QuestionAnswering` vs. `CodeRetrieval` in `Dense Only` mode and observe how `CodeRetrieval` boosts chunks containing `cURL` and Python SDK blocks (`has_code = true`).
+
+---
+
+## 🧠 3. Key Learnings & MIT Systems Takeaways
+
+1. **Selective Sub-Network Loading Saves 55% RAM for Text Indexing:** Extracting the `Gemma3TextModel` + `Dense_1` + `Dense_2` sub-graph (`303M` parameters) produces bit-for-bit identical text embeddings to the full `740M` model while cutting memory footprint in half.
+2. **Asymmetric Prompting Bridges the Modality/Length Gap:** Prefixing documents with `title: {title} | text: {body}` and queries with `task: question answering | query: {q}` aligns short interrogative queries with long declarative passages.
+3. **Dynamic Range Matters More Than Mantissa Precision:** Always choose `float32` or `bfloat16` (8-bit exponent) over `float16` (5-bit exponent) for Gemma-family models.
+
+---
+
+## 🧹 4. Resource Teardown & Cost Cleanup (`destroy`)
+
+To clean up any running Web UI server or cloud resources after completing this module:
+
+```bash
+python -m cli.rag_cli destroy
+```
 
 ---
 
 ## Next Module
-Proceed to **[Module 03: Corpus Engineering & Structure-Aware Chunking on `sarvam-docs`](./03_sarvam_corpus_chunking.md)**.
+Proceed to **[Module 03: Corpus Engineering & Structure-Aware Markdown/Code Chunking on `sarvam-docs`](./03_sarvam_corpus_chunking.md)**.

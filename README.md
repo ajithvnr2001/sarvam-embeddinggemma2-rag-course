@@ -224,12 +224,13 @@ Open **`http://localhost:8090`** in your browser to access:
 ```text
 sarvam-rag-course/
 ├── README.md                              # Project overview, architecture & quickstart
-├── COURSE.md                              # Master 10-Module Curriculum Syllabus
+├── BEGINNER_TO_PRODUCTION_STEP_BY_STEP.md # Bit-by-Bit Beginner-to-Production Textbook (Bits 1-10)
+├── COURSE.md                              # Master 11-Module Curriculum Syllabus
 ├── CLI_VS_UI_GUIDE.md                     # Complete CLI vs. Web UI side-by-side reference
 ├── requirements.txt                       # Python dependencies
 ├── Dockerfile                             # Cloud Run production container definition
 ├── .env.example                           # Safe environment template (no secrets)
-├── course/                                # 10 In-Depth Course Modules (Beginner -> Advanced)
+├── course/                                # 11 In-Depth Course Modules (Explanation -> Practicals -> Learnings -> Destroy)
 │   ├── 01_beginner_foundations.md
 │   ├── 02_embeddinggemma2_architecture.md
 │   ├── 03_sarvam_corpus_chunking.md
@@ -239,27 +240,28 @@ sarvam-rag-course/
 │   ├── 07_vertex_ai_grounded_generation.md
 │   ├── 08_gcp_bigquery_cloudrun_rag.md
 │   ├── 09_evaluation_benchmarking.md
-│   └── 10_cli_and_ui_master_guide.md
+│   ├── 10_cli_and_ui_master_guide.md
+│   └── 11_teardown_and_cost_cleanup.md
 ├── src/                                   # Core Modular RAG Engine
 │   ├── config.py                          # Environment & path settings
 │   ├── chunker.py                         # Structure-aware Markdown & code chunker
 │   ├── embedder.py                        # EmbeddingGemma 2 (Text + MRL + 740M Multimodal)
 │   ├── retriever.py                       # Dense, BM25, Hybrid RRF & MRL Funnel retrieval
 │   ├── generator.py                       # Vertex AI gemini-2.5-flash synthesis & LLM Judge
-│   ├── gcp_integration.py                 # GCS upload & BigQuery VECTOR_SEARCH integration
+│   ├── gcp_integration.py                 # GCS upload, BigQuery VECTOR_SEARCH & Cloud Teardown
 │   └── multimodal_rag.py                  # Audio WAV + Image PNG asset generator & indexer
 ├── cli/
-│   └── rag_cli.py                         # 8-command Rich CLI application
+│   └── rag_cli.py                         # 9-command Rich CLI application (including destroy)
 ├── ui/
 │   └── app.py                             # FastAPI backend + 4-tab Interactive Web Studio
 ├── scripts/
 │   ├── run_all_verifications.py           # End-to-end verification & benchmark suite
+│   ├── destroy_resources.sh               # Idempotent GCP & local teardown + verification script
 │   └── capture_ui_screenshots.py          # Headless Chromium screenshot automation
 └── data/
-    ├── processed/chunks.json              # 307 structured chunks from sarvam-docs
-    ├── multimodal/                        # Generated WAV audio & PNG diagram assets
     ├── index/                             # Pre-computed MRL (768/512/256/128) & multimodal vectors
     └── artifacts/
         ├── evaluation_report.json         # Full verification & benchmark report
+        ├── teardown_verification.txt      # Live verified cloud teardown proof
         └── screenshots/                   # Captured Web UI Studio screenshots
 ```

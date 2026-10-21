@@ -31,6 +31,23 @@ flowchart LR
 | **Bit 9** | 🔴 Production | Evaluation: IR Metrics (`Hit@1`, `MRR`) & Vertex AI LLM-as-a-Judge | [`course/09_evaluation_benchmarking.md`](./course/09_evaluation_benchmarking.md) |
 | **Bit 10** | 🧹 Lifecycle | **Master CLI/UI Guide & Resource Teardown (`destroy`)** | [`course/10_cli_and_ui_master_guide.md`](./course/10_cli_and_ui_master_guide.md) & [`course/11_teardown_and_cost_cleanup.md`](./course/11_teardown_and_cost_cleanup.md) |
 
+### 🧪 Interactive Bit-by-Bit Lab Runner (`scripts/interactive_learning_labs.py`)
+
+Want to see **"❌ Naive Beginner Mistake vs. ✅ Production Solution"** executed live in your terminal for any bit? Run [`scripts/interactive_learning_labs.py`](./scripts/interactive_learning_labs.py):
+
+```bash
+cd /data/opencode/sarvam-rag-course
+source .venv/bin/activate
+
+# Run a specific bit's interactive micro-lab (Bits 1 to 10):
+python scripts/interactive_learning_labs.py --bit 1
+python scripts/interactive_learning_labs.py --bit 2
+python scripts/interactive_learning_labs.py --bit 4
+
+# Or run all 10 interactive labs sequentially:
+python scripts/interactive_learning_labs.py --all
+```
+
 ---
 
 # 🟢 PHASE 1: BEGINNER LEVEL (Bits 1 – 3)

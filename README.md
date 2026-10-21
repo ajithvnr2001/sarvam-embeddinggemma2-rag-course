@@ -19,6 +19,7 @@ A production-grade **Beginner-to-Advanced Retrieval-Augmented Generation (RAG) E
 | Document | Description |
 | :--- | :--- |
 | **[`BEGINNER_TO_PRODUCTION_STEP_BY_STEP.md`](./BEGINNER_TO_PRODUCTION_STEP_BY_STEP.md)** | **🌱 START HERE: Bit-by-Bit Beginner-to-Production Guide** (Real-world analogies, under-the-hood math, file-by-file code walkthrough, and hands-on CLI + UI labs from Bit 1 to Bit 10) |
+| **[`scripts/interactive_learning_labs.py`](./scripts/interactive_learning_labs.py)** | **🧪 Interactive 10-Bit Micro-Lab Runner** (`python scripts/interactive_learning_labs.py --bit 1..10` — executes side-by-side *"Naive Mistake vs. Production Solution"* experiments in your terminal) |
 | **[`COURSE.md`](./COURSE.md)** | **Master Course Index & Architecture Syllabus** (All 10 Modules from Beginner to Advanced) |
 | **[`CLI_VS_UI_GUIDE.md`](./CLI_VS_UI_GUIDE.md)** | **Side-by-Side CLI vs. UI Handbook** (GCP CLI vs. Console UI, Hugging Face CLI vs. Web UI, GitHub CLI vs. Web UI, and RAG CLI vs. Web Studio UI) |
 | **[`data/artifacts/evaluation_report.json`](./data/artifacts/evaluation_report.json)** | Live verification metrics, MRL benchmarks, Multimodal cross-modal scores, and Vertex AI LLM-as-a-Judge grades |

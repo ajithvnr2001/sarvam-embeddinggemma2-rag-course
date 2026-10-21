@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Why do standard NLP tokenizers and stopword lists break lexical search on Indian-language developer documentation like sarvam-docs?",
+    "options": [
+      "Because Python strings do not support UTF-8",
+      "Because splitting on hyphens and colons breaks 'saaras:v3' into ['saaras', 'v3'] and 'or-IN' / 'hi-IN' into ['or', 'in'] / ['hi', 'in'], where 'or' and 'in' get deleted as English stopwords",
+      "Because BM25 only works on numbers",
+      "Because Markdown tables cannot be tokenized"
+    ],
+    "correct": 1,
+    "explanation": "Preserving internal colons, hyphens, and dots in `[a-z0-9_]+(?:[:.-][a-z0-9_]+)*` keeps BCP-47 locale codes (`hi-IN`, `or-IN`) and model version tags (`saaras:v3`) intact.",
+    "stage": "pre"
+  },
+  {
+    "question": "In Okapi BM25, what is the upper asymptote of the term-frequency factor f*(k1 + 1) / (f + k1) as term frequency f -> infinity (when |d| = avgdl)?",
+    "options": [
+      "Infinity",
+      "k1 + 1 (which equals 2.5 when k1 = 1.5)",
+      "Zero",
+      "1.0"
+    ],
+    "correct": 1,
+    "explanation": "Taking the limit as f -> infinity of f*(k1 + 1)/(f + k1) yields k1 + 1. This sublinear saturation prevents a document that repeats one common query word 50 times from overpowering a document that matches two distinct rare query terms once.",
+    "stage": "pre"
+  },
+  {
+    "question": "What happens in Okapi BM25 if you set the length normalization hyperparameter b = 0?",
+    "options": [
+      "All BM25 scores become zero",
+      "Document length normalization is completely disabled (1 - b + b*(|d|/avgdl) = 1), so long documents are no longer penalized for their length",
+      "IDF is disabled",
+      "Only the first word of each document is indexed"
+    ],
+    "correct": 1,
+    "explanation": "When b = 0, the length ratio |d|/avgdl is multiplied by 0, removing all document length adjustment.",
+    "stage": "post"
+  },
+  {
+    "question": "Why does a rare model code like 'saaras:v3' receive a much higher Robertson-Sparck Jones IDF score than the word 'model'?",
+    "options": [
+      "Because 'saaras:v3' has more characters",
+      "Because document frequency df('saaras:v3') is very small relative to corpus size N, making (N - df + 0.5)/(df + 0.5) large",
+      "Because BM25 weights words alphabetically",
+      "Because colons multiply the score by 10"
+    ],
+    "correct": 1,
+    "explanation": "IDF is monotonically decreasing with document frequency df(t), giving rare discriminative terms the highest leverage.",
+    "stage": "post"
+  }
+]

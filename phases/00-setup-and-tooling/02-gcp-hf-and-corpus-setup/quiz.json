@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Why must you profile a Markdown documentation corpus before designing your RAG chunking pipeline?",
+    "options": [
+      "Because Python cannot read Markdown files without counting words first",
+      "Because structural features like heading hierarchies and pipe tables (950+ rows in sarvam-docs) determine whether naive fixed-window splitting will corrupt tables and lose section context",
+      "Because BigQuery charges per Markdown heading",
+      "To convert all tables into audio files"
+    ],
+    "correct": 1,
+    "explanation": "Profiling reveals high table and heading density in sarvam-docs, showing why structure-aware Markdown chunking is required instead of naive character slicing.",
+    "stage": "pre"
+  },
+  {
+    "question": "What is the safest way to log environment configuration during RAG service startup?",
+    "options": [
+      "Print os.environ directly to stdout",
+      "Commit .env to a public GitHub branch so teammates can see it",
+      "Mask sensitive keys (such as HF_TOKEN) so only a short prefix/suffix or length is shown, and keep .env in .gitignore",
+      "Encode API keys in Base64 and print them in full"
+    ],
+    "correct": 2,
+    "explanation": "Deterministic secret masking prevents accidental credential exposure in terminal logs, CI outputs, and monitoring systems.",
+    "stage": "pre"
+  },
+  {
+    "question": "How many Markdown documents and approximately how many words make up the sarvam-docs developer corpus?",
+    "options": [
+      "5 documents and 1,200 words",
+      "64 documents and ~58,284 words across api-reference/ and documentation/",
+      "1,000 PDF files with no headings",
+      "12 CSV spreadsheets"
+    ],
+    "correct": 1,
+    "explanation": "The sarvam-docs corpus contains 64 Markdown files totaling 58,284 words across 36 API reference specs, 27 developer guides, and 1 root README.",
+    "stage": "post"
+  },
+  {
+    "question": "Which command configures Google Cloud Application Default Credentials (ADC) so Python SDKs (Vertex AI, BigQuery, GCS) authenticate without hardcoded service-account JSON files?",
+    "options": [
+      "gcloud auth application-default login",
+      "pip install google-cloud",
+      "git config --global user.name",
+      "huggingface-cli logout"
+    ],
+    "correct": 0,
+    "explanation": "gcloud auth application-default login stores local user credentials in a standard location automatically discovered by google-cloud-* and google-genai Python libraries.",
+    "stage": "post"
+  }
+]

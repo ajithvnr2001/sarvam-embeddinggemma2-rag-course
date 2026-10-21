@@ -1,0 +1,50 @@
+[
+  {
+    "question": "How does google/embeddinggemma-2 enable a single text query to retrieve Markdown docs, PNG architecture diagrams, and 16kHz WAV audio files simultaneously?",
+    "options": [
+      "By matching file extensions alphabetically",
+      "By projecting Text tokens, Vision ViT patches, and 16kHz Audio Conformer representations through a shared Gemma 3n backbone onto the exact same 768-D unit hypersphere S^767",
+      "By deleting audio and image files",
+      "By converting text into MP3 files before searching"
+    ],
+    "correct": 1,
+    "explanation": "Because all three modality towers map into a shared L2-normalized 768-D vector space, inner product <q_text, v_modality> directly measures cross-modal semantic similarity.",
+    "stage": "pre"
+  },
+  {
+    "question": "What audio sample rate and channel configuration does the Gemma 3n / EmbeddingGemma-2 audio encoder expect?",
+    "options": [
+      "96 kHz 5.1 surround sound",
+      "16 kHz mono PCM waveform converted into log-mel spectrograms",
+      "8-bit MIDI notes only",
+      "1 Hz DC signal"
+    ],
+    "correct": 1,
+    "explanation": "Speech and audio encoders in the Gemma 3n family operate on 16,000 Hz mono PCM waveforms transformed into log-mel spectrograms.",
+    "stage": "pre"
+  },
+  {
+    "question": "Since audio, image, and text vectors all live on the same unit sphere S^767, can you use an AUDIO embedding as the query vector to retrieve matching TEXT documentation or PNG diagrams?",
+    "options": [
+      "Yes — inner product <v_audio, v_text> is symmetric on S^767, so any modality can query any other modality (Audio -> Text, Image -> Text, Text -> Audio/Image)",
+      "No — inner product only works when the left vector is text",
+      "Only if the audio file is smaller than 10 bytes",
+      "No — cosine similarity is not symmetric"
+    ],
+    "correct": 0,
+    "explanation": "Because <a, b> = <b, a> for any two unit vectors in S^767, a shared multimodal embedding space supports arbitrary any-to-any cross-modal retrieval.",
+    "stage": "post"
+  },
+  {
+    "question": "Where can you visually inspect retrieved PNG architecture diagrams and play retrieved 16kHz WAV speech samples in our production application?",
+    "options": [
+      "In Tab 3 (Multimodal Text + Audio + Image Lab) of the FastAPI Web Studio at http://localhost:8090, or via `python -m cli.rag_cli multimodal` in the terminal",
+      "Only by opening raw .npy binary files in Notepad",
+      "In git status",
+      "In requirements.txt"
+    ],
+    "correct": 0,
+    "explanation": "Tab 3 of the Web Studio renders retrieved PNG diagrams and interactive HTML5 audio players alongside text chunks and cosine scores.",
+    "stage": "post"
+  }
+]

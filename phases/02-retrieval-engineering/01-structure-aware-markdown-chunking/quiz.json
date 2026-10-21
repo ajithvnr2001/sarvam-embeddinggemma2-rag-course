@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Why does a naive regex splitter that splits on '^#\\s+' corrupt developer documentation containing bash or Python code blocks?",
+    "options": [
+      "Because bash does not use ASCII characters",
+      "Because comments inside ```bash or ```python blocks also start with '# ', causing the splitter to mistake code comments for H1 headings and sever the code block mid-snippet",
+      "Because Markdown does not allow code blocks",
+      "Because Python regex cannot match newlines"
+    ],
+    "correct": 1,
+    "explanation": "Tracking a boolean `in_code_block` state toggled by ``` fences ensures `#` lines inside code blocks are preserved intact.",
+    "stage": "pre"
+  },
+  {
+    "question": "What is a 'Context Orphan' in a RAG document index?",
+    "options": [
+      "A document with no URL",
+      "A chunk whose body text uses pronouns or generic parameter tables ('| model | string |') without the parent document or section heading that identifies which API endpoint it belongs to",
+      "A vector with 128 dimensions",
+      "An unused Python import"
+    ],
+    "correct": 1,
+    "explanation": "When a parameter table or paragraph is separated from its parent heading, neither BM25 nor dense embeddings know which API or model the chunk describes.",
+    "stage": "pre"
+  },
+  {
+    "question": "How does src/chunker.py eliminate Context Orphans across all 244 chunks of sarvam-docs?",
+    "options": [
+      "By putting all 64 files into a single giant chunk",
+      "By splitting along ATX headings (H1/H2/H3) and injecting the hierarchical breadcrumb 'title: {doc_title} — {section_heading} | text: {content}' into every chunk",
+      "By deleting all tables",
+      "By sorting lines alphabetically"
+    ],
+    "correct": 1,
+    "explanation": "Breadcrumb injection binds the parent document title and section heading to every single chunk and sub-chunk.",
+    "stage": "post"
+  },
+  {
+    "question": "If a single Markdown section is 3,000 characters long (exceeding max_chars=1100), how should it be sub-chunked?",
+    "options": [
+      "Truncate and discard everything after character 1,100",
+      "Split along paragraph boundaries ('\\n\\n') with a sliding character overlap (e.g., 150 chars) while retaining the parent section heading ('Heading (Part k)') on every part",
+      "Slice every 100 characters mid-word",
+      "Skip the file entirely"
+    ],
+    "correct": 1,
+    "explanation": "Paragraph-boundary sub-splitting with overlap and preserved breadcrumb headers keeps sentences whole and maintains context continuity across parts.",
+    "stage": "post"
+  }
+]

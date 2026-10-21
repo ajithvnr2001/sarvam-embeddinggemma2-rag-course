@@ -1,268 +1,242 @@
-# End-to-End Multimodal RAG Course: `google/embeddinggemma-2` + Sarvam AI Docs + Google Cloud Vertex AI & BigQuery
+# Sarvam AI + `google/embeddinggemma-2` RAG Engineering from Scratch
 
-[![Model: google/embeddinggemma-2](https://img.shields.io/badge/HuggingFace-google%2Fembeddinggemma--2-FFD21E?logo=huggingface)](https://huggingface.co/google/embeddinggemma-2)
-[![Corpus: sarvam-docs](https://img.shields.io/badge/Corpus-ajithvnr2001%2Fsarvam--docs-FF6B00?logo=github)](https://github.com/ajithvnr2001/sarvam-docs)
-[![GCP: Vertex AI & BigQuery](https://img.shields.io/badge/Google_Cloud-Vertex_AI_%26_BigQuery-4285F4?logo=googlecloud)](https://cloud.google.com/vertex-ai)
+<p align="center">
+  <b>Five phases. Thirteen lessons. Every RAG primitive written from scratch in pure Python before using production SDKs. Every lesson ends with runnable code, a 4-question quiz, a reusable system prompt, and an agent skill.</b>
+</p>
 
-A production-grade **Beginner-to-Advanced Retrieval-Augmented Generation (RAG) Engineering Course & Reference Implementation** built on:
-- **Embeddings**: [`google/embeddinggemma-2`](https://huggingface.co/google/embeddinggemma-2) (`Gemma3TextModel` 303M text backbone + `740M` full multimodal `<|image|>` & `<|audio|>` encoders with **Matryoshka Representation Learning (MRL)** at `768d`, `512d`, `256d`, and `128d`).
-- **Knowledge Base**: [`ajithvnr2001/sarvam-docs`](https://github.com/ajithvnr2001/sarvam-docs) (38 Markdown documentation pages covering Sarvam AI's Bulbul TTS, Saaras v3 STT, Sarvam-30B/105B LLMs, Mayura Translation, Vision, and Dubbing APIs).
-- **Cloud Infrastructure (GCP)**: Google Cloud **Vertex AI (`gemini-2.5-flash`)** for citation-enforced grounded generation & LLM-as-a-Judge evaluation, **Google Cloud Storage (GCS)** for vector artifact staging, and **Google BigQuery `VECTOR_SEARCH`** for serverless cloud vector retrieval.
-- **Dual Interfaces**:
-  1. **8-Command Rich Terminal CLI** (`cli/rag_cli.py`)
-  2. **4-Tab Interactive Web UI Studio** (`ui/app.py` powered by FastAPI + Tailwind CSS)
+<p align="center">
+  <img src="https://img.shields.io/badge/Phases-5%20(Beginner%20to%20Production)-2563EB?style=for-the-badge" alt="Phases" />
+  <img src="https://img.shields.io/badge/Lessons-13%20(6--Beat%20Format)-7C3AED?style=for-the-badge" alt="Lessons" />
+  <img src="https://img.shields.io/badge/Model-google%2Fembeddinggemma--2-FF9D00?style=for-the-badge&logo=huggingface&logoColor=white" alt="Hugging Face" />
+  <img src="https://img.shields.io/badge/Cloud-GCP%20Vertex%20AI%20%26%20BigQuery-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" alt="GCP" />
+  <img src="https://img.shields.io/badge/FinOps%20Cost-%240.00%20Verified-10B981?style=for-the-badge" alt="Zero Billing" />
+</p>
 
----
-
-## 📚 Quick Navigation
-
-| Document | Description |
-| :--- | :--- |
-| **[`BEGINNER_TO_PRODUCTION_STEP_BY_STEP.md`](./BEGINNER_TO_PRODUCTION_STEP_BY_STEP.md)** | **🌱 START HERE: Bit-by-Bit Beginner-to-Production Guide** (Real-world analogies, under-the-hood math, file-by-file code walkthrough, and hands-on CLI + UI labs from Bit 1 to Bit 10) |
-| **[`scripts/interactive_learning_labs.py`](./scripts/interactive_learning_labs.py)** | **🧪 Interactive 10-Bit Micro-Lab Runner** (`python scripts/interactive_learning_labs.py --bit 1..10` — executes side-by-side *"Naive Mistake vs. Production Solution"* experiments in your terminal) |
-| **[`COURSE.md`](./COURSE.md)** | **Master Course Index & Architecture Syllabus** (All 10 Modules from Beginner to Advanced) |
-| **[`CLI_VS_UI_GUIDE.md`](./CLI_VS_UI_GUIDE.md)** | **Side-by-Side CLI vs. UI Handbook** (GCP CLI vs. Console UI, Hugging Face CLI vs. Web UI, GitHub CLI vs. Web UI, and RAG CLI vs. Web Studio UI) |
-| **[`data/artifacts/evaluation_report.json`](./data/artifacts/evaluation_report.json)** | Live verification metrics, MRL benchmarks, Multimodal cross-modal scores, and Vertex AI LLM-as-a-Judge grades |
-
-### 🎓 11-Module Structural Curriculum (`course/`) — *Explanation → Practicals → Learnings → Destroy*
-
-1. **[Module 01 — Beginner Foundations: What is RAG & Why Embeddings Matter](./course/01_beginner_foundations.md)**
-2. **[Module 02 — Deep Dive into `google/embeddinggemma-2` Architecture](./course/02_embeddinggemma2_architecture.md)**
-3. **[Module 03 — Structure-Aware Markdown & Code Chunking on `sarvam-docs`](./course/03_sarvam_corpus_chunking.md)**
-4. **[Module 04 — Matryoshka Representation Learning (MRL) & Two-Stage Funnel Retrieval](./course/04_matryoshka_mrl_retrieval.md)**
-5. **[Module 05 — Hybrid Retrieval: Combining Dense MRL Vectors + Okapi BM25 via RRF](./course/05_hybrid_bm25_rrf_search.md)**
-6. **[Module 06 — True Multimodal RAG: Unified Text, Image (`<|image|>`) & Audio (`<|audio|>`) Space](./course/06_multimodal_audio_image_rag.md)**
-7. **[Module 07 — Grounded Generation with Google Cloud Vertex AI (`gemini-2.5-flash`)](./course/07_vertex_ai_grounded_generation.md)**
-8. **[Module 08 — Enterprise Cloud Scale: GCP Cloud Storage, BigQuery `VECTOR_SEARCH` & Cloud Run](./course/08_gcp_bigquery_cloudrun_rag.md)**
-9. **[Module 09 — Production Evaluation: IR Metrics (`Recall@K`, `MRR`) & LLM-as-a-Judge](./course/09_evaluation_benchmarking.md)**
-10. **[Module 10 — Complete End-to-End CLI & Web UI Master Guide](./course/10_cli_and_ui_master_guide.md)**
-11. **[Module 11 — Production Resource Teardown, Cost Governance & Clean Destroy (`destroy`)](./course/11_teardown_and_cost_cleanup.md)**
+<p align="center">
+  <a href="#run-local-code">Quickstart</a> &nbsp;·&nbsp;
+  <a href="#choose-a-learning-path">Learning Paths</a> &nbsp;·&nbsp;
+  <a href="#contents">All 5 Phases &amp; 13 Lessons</a> &nbsp;·&nbsp;
+  <a href="ROADMAP.md">Roadmap</a> &nbsp;·&nbsp;
+  <a href="cheatsheets/sarvam-rag.md">Cheatsheet</a> &nbsp;·&nbsp;
+  <a href="#production-cli--4-tab-web-studio">CLI &amp; UI Studio</a> &nbsp;·&nbsp;
+  <a href="#cloud-finops-teardown-destroy">Cloud Destroy ($0.00)</a>
+</p>
 
 ---
 
-## 🏗️ End-to-End System Architecture
-
-```mermaid
-flowchart TB
-    subgraph Corpus["1. Corpus & Multimodal Assets"]
-        DOCS["sarvam-docs Repository<br/>38 Markdown Files -> 307 Chunks"]
-        MM["Multimodal Assets<br/>WAV Audio + PNG Diagrams + Interleaved Docs"]
-    end
-
-    subgraph Embed["2. google/embeddinggemma-2 (740M Multimodal / 303M Text)"]
-        TEXT_ENC["Text Backbone (Gemma3TextModel)<br/>Asymmetric Prompts (Query vs Doc)"]
-        MM_ENC["Multimodal Towers<br/>Vision (<|image|>) + Audio (<|audio|>)"]
-        MRL["Matryoshka Slicing & L2 Renormalization<br/>768d | 512d | 256d | 128d"]
-    end
-
-    subgraph Index["3. Local & Cloud Vector Stores"]
-        LOCAL_IDX["Local Hybrid Index<br/>NumPy MRL Matrices + Okapi BM25"]
-        GCS["Google Cloud Storage<br/>gs://genai-511910-sarvam-rag/..."]
-        BQ["Google BigQuery Vector Table<br/>genai-511910.sarvam_rag.docs_embeddings"]
-    end
-
-    subgraph Retrieval["4. Retrieval & Fusion Engines"]
-        RRF["Reciprocal Rank Fusion (RRF k=60)<br/>Dense Cosine + Sparse BM25"]
-        FUNNEL["Two-Stage Matryoshka Funnel<br/>128d Shortlist -> 768d Exact Rerank"]
-        BQ_SEARCH["BigQuery VECTOR_SEARCH()<br/>Serverless SQL Cosine Retrieval"]
-    end
-
-    subgraph Gen["5. Grounded Generation & Interfaces"]
-        GEMINI["Vertex AI gemini-2.5-flash<br/>Grounded Synthesis + [Chunk ID] Citations"]
-        CLI["8-Command Rich CLI<br/>cli/rag_cli.py"]
-        UI["4-Tab FastAPI Web Studio<br/>ui/app.py (Port 8090)"]
-    end
-
-    DOCS --> TEXT_ENC --> MRL
-    MM --> MM_ENC --> MRL
-    MRL --> LOCAL_IDX
-    MRL --> GCS --> BQ
-    LOCAL_IDX --> RRF & FUNNEL
-    BQ --> BQ_SEARCH
-    RRF & FUNNEL & BQ_SEARCH --> GEMINI
-    GEMINI --> CLI & UI
-```
+Every lesson in [`phases/`](phases/) follows the **6-Beat Lesson Contract** (`The Problem` $\rightarrow$ `The Concept` $\rightarrow$ `Build It` $\rightarrow$ `Use It` $\rightarrow$ `Ship It` $\rightarrow$ `Exercises` + `Key Terms`) and contains:
+- **`docs/en.md`** — Mathematical derivation, Mermaid architecture diagrams, and step-by-step walkthrough
+- **`code/main.py`** — Self-contained, runnable Python implementation from scratch (verified via `scripts/lesson_run.py --execute --strict`)
+- **`quiz.json`** — 2 pre-quiz + 2 post-quiz questions with detailed explanations
+- **`outputs/prompt-*.md`** — Copy-pasteable production system prompt
+- **`outputs/skill-*.md`** — Reusable AI agent skill definition (installable via `scripts/install_skills.py`)
 
 ---
 
-## 🖥️ Interactive Web UI Studio (`ui/app.py`)
-
-### Tab 1: Grounded RAG Search & Vertex AI Synthesis
-![Tab 1 — Grounded RAG Search & Vertex AI Synthesis](./data/artifacts/screenshots/ui_tab1_rag_studio.png)
-
-### Tab 2: Matryoshka (MRL) Dimension Explorer (`768d` vs `512d` vs `256d` vs `128d`)
-![Tab 2 — Matryoshka Dimension Explorer](./data/artifacts/screenshots/ui_tab2_mrl_explorer.png)
-
-### Tab 3: Multimodal Audio (`<|audio|>`) & Vision (`<|image|>`) RAG Lab
-![Tab 3 — Multimodal Audio & Vision Lab](./data/artifacts/screenshots/ui_tab3_multimodal_lab.png)
-
-### Tab 4: GCP Cloud Storage & BigQuery `VECTOR_SEARCH` Console
-![Tab 4 — GCP BigQuery Vector Search Console](./data/artifacts/screenshots/ui_tab4_gcp_bigquery.png)
-
----
-
-## 📊 Live Benchmark Results (`sarvam-docs`)
-
-All metrics below are verified on the live 307-chunk `sarvam-docs` corpus (`data/artifacts/evaluation_report.json`):
-
-### 1. Retrieval Strategy & Matryoshka (MRL) Compression Benchmarks
-
-| Strategy | MRL Dim | Compression | RAM (`float32`) | Hit@1 | Recall@3 | Recall@5 | MRR@5 |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Hybrid RRF (Dense + BM25)** | `768d` | `1.0x` | `921.0 KB` | **100.0%** | **100.0%** | **100.0%** | **1.0000** |
-| **Hybrid RRF (Dense + BM25)** | `256d` | `3.0x` | `307.0 KB` | **100.0%** | **100.0%** | **100.0%** | **1.0000** |
-| **MRL Funnel (`128d -> 768d`)** | `128d -> 768d` | `6.0x` Stage-1 | `153.5 KB` Stage-1 | **100.0%** | **100.0%** | **100.0%** | **1.0000** |
-| **Dense Only (`768d`)** | `768d` | `1.0x` | `921.0 KB` | 91.7% | 100.0% | 100.0% | 0.9583 |
-| **Dense Only (`512d`)** | `512d` | `1.5x` | `614.0 KB` | 91.7% | 100.0% | 100.0% | 0.9583 |
-| **Dense Only (`256d`)** | `256d` | `3.0x` | `307.0 KB` | 91.7% | 100.0% | 100.0% | 0.9583 |
-| **Dense Only (`128d`)** | `128d` | `6.0x` | `153.5 KB` | 83.3% | 100.0% | 100.0% | 0.9167 |
-| **BM25 Sparse Only** | — | — | — | 83.3% | 91.7% | 91.7% | 0.8750 |
-
-### 2. Multimodal Cross-Modal Retrieval (`740M` Full Model)
-
-| Text Query | Top-1 Retrieved Item | Modality | Cosine Score (`768d`) | Rank |
-| :--- | :--- | :---: | :---: | :---: |
-| *"sound of rain falling"* | `mm_audio_rain` (`rain.wav`) | `audio` (`<|audio|>`) | **0.78649** | **#1** |
-| *"telephone ringing alert tone"* | `mm_audio_phone` (`phone_ring.wav`) | `audio` (`<|audio|>`) | **0.87140** | **#1** |
-| *"speech to text transcription pipeline and sample rate"* | `mm_interleaved_stt` (Audio + Image + Text) | `interleaved` | **0.85529** | **#1** |
-| *"Bulbul v3 text to speech speaker voices"* | `mm_image_tts` (`tts_card.png`) | `image` (`<|image|>`) | **0.80942** | **#1** |
-
-### 3. Vertex AI `gemini-2.5-flash` Grounded Generation (LLM-as-a-Judge)
-
-| Evaluation Query | Context Relevance | Faithfulness | Completeness |
-| :--- | :---: | :---: | :---: |
-| *"How do I authenticate with the Sarvam AI API and what header should I pass?"* | **5.0 / 5.0** | **5.0 / 5.0** | **5.0 / 5.0** |
-| *"What are the supported speaker names and sample rates for Bulbul v3 Text-to-Speech?"* | **5.0 / 5.0** | **5.0 / 5.0** | **5.0 / 5.0** |
-| *"Explain the difference between translate, transliterate, codemix, and verbatim modes in Saaras v3 Speech-to-Text."* | **5.0 / 5.0** | **5.0 / 5.0** | **5.0 / 5.0** |
-
----
-
-## ⚡ Quickstart: Run via CLI or Web UI
-
-### 1. Clone & Configure Environment
+## Run local code
 
 ```bash
 git clone https://github.com/ajithvnr2001/sarvam-embeddinggemma2-rag-course.git
 cd sarvam-embeddinggemma2-rag-course
-
-python3 -m venv .venv
-source .venv/bin/activate
 pip install -r requirements.txt
 
-# Copy .env.example to .env and populate your tokens
-cp .env.example .env
-```
+# 1. Verify environment & preflight checks
+python3 phases/00-setup-and-tooling/01-dev-environment-and-preflight/code/verify.py
 
-Edit `.env` with your credentials (never commit `.env`!):
-```ini
-HF_TOKEN=hf_YOUR_HUGGINGFACE_TOKEN_HERE
-GITHUB_TOKEN=ghp_YOUR_GITHUB_TOKEN_HERE
-GCP_PROJECT_ID=genai-511910
-GCP_LOCATION=us-central1
-GCS_BUCKET_NAME=genai-511910-sarvam-rag
-BQ_DATASET_ID=sarvam_rag
-BQ_TABLE_ID=docs_embeddings
-SARVAM_DOCS_PATH=/data/opencode/sarvam
-VERTEX_GEMINI_MODEL=gemini-2.5-flash
+# 2. Run your first lesson (Vectors, Norms & Cosine Similarity from scratch)
+python3 phases/01-math-and-embeddings/01-vectors-norms-and-cosine-similarity/code/main.py
+
+# 3. Audit and execute all 13 lessons across all 5 phases
+python3 scripts/audit_lessons.py --strict
+python3 scripts/lesson_run.py --execute --strict
 ```
 
 ---
 
-### 2. Option A: Run via the 9-Command Terminal CLI (`cli/rag_cli.py`)
-
-```bash
-# 1. Ingest & chunk sarvam-docs and compute MRL embeddings (768d, 512d, 256d, 128d)
-python -m cli.rag_cli ingest
-
-# 2. Run Hybrid BM25 + Dense MRL Search
-python -m cli.rag_cli search "How do I authenticate with the Sarvam AI API?" --mode hybrid --dim 768 --top-k 5
-
-# 3. Ask a Grounded Question with Vertex AI Gemini Synthesis + LLM-as-a-Judge Evaluation
-python -m cli.rag_cli ask "What are the supported speaker names and sample rates for Bulbul v3?" --mode hybrid --dim 768 --evaluate
-
-# 4. Run the Matryoshka (MRL) Dimension Benchmark (768d vs 512d vs 256d vs 128d)
-python -m cli.rag_cli mrl-benchmark "What modes does Saaras v3 support for speech transcription?"
-
-# 5. Query the Multimodal Audio (<|audio|>) & Image (<|image|>) Index
-python -m cli.rag_cli multimodal "telephone ringing alert tone"
-
-# 6. Provision & Sync Vectors to Google Cloud Storage + BigQuery
-python -m cli.rag_cli gcp-sync --dim 256
-
-# 7. Run Serverless SQL VECTOR_SEARCH on Google BigQuery
-python -m cli.rag_cli bq-search "How do I authenticate with the Sarvam API?" --top-k 5
-
-# 8. Launch Interactive Multi-Turn RAG Terminal Chat
-python -m cli.rag_cli chat
-
-# 9. Destroy Cloud & Runtime Resources (Deletes BigQuery dataset + GCS bucket + Stops Web UI server)
-python -m cli.rag_cli destroy
-# Or run the standalone shell teardown & verification script:
-bash scripts/destroy_resources.sh
-```
-
----
-
-### 3. Option B: Run via the Interactive 4-Tab Web UI Studio (`ui/app.py`)
-
-```bash
-# Start the FastAPI + Uvicorn Web Server on Port 8090
-.venv/bin/python -m uvicorn ui.app:app --host 0.0.0.0 --port 8090
-```
-
-Open **`http://localhost:8090`** in your browser to access:
-- **Tab 1 (`Grounded RAG Studio`)**: Interactive search bar, retrieval mode selector (`Hybrid RRF`, `MRL Funnel 128d->768d`, `Dense Only`, `BM25 Only`), MRL dimension selector (`768d`, `512d`, `256d`, `128d`), grounded Gemini synthesis toggle, and LLM-as-a-Judge 5-point rubric cards.
-- **Tab 2 (`Matryoshka MRL Explorer`)**: Real-time comparison across `768d`, `512d`, `256d`, and `128d` showing RAM savings, search latency, and Top-1 chunk stability.
-- **Tab 3 (`Multimodal Audio & Image Lab`)**: Cross-modal retrieval across real WAV audio (`<|audio|>`), PNG visual cards (`<|image|>`), and interleaved docs in a unified `768d` space.
-- **Tab 4 (`GCP BigQuery Vector Search`)**: Live serverless `VECTOR_SEARCH` against `genai-511910.sarvam_rag.docs_embeddings` on Google Cloud.
-
-> 💡 **Want step-by-step instructions comparing every CLI command with its exact Web UI equivalent (including GCP Console, Hugging Face UI, and GitHub UI)?** Read **[`CLI_VS_UI_GUIDE.md`](./CLI_VS_UI_GUIDE.md)** and **[`course/10_cli_and_ui_master_guide.md`](./course/10_cli_and_ui_master_guide.md)**.
-
----
-
-## 📂 Repository Structure
+## Use every lesson the same way
 
 ```text
-sarvam-rag-course/
-├── README.md                              # Project overview, architecture & quickstart
-├── BEGINNER_TO_PRODUCTION_STEP_BY_STEP.md # Bit-by-Bit Beginner-to-Production Textbook (Bits 1-10)
-├── COURSE.md                              # Master 11-Module Curriculum Syllabus
-├── CLI_VS_UI_GUIDE.md                     # Complete CLI vs. Web UI side-by-side reference
-├── requirements.txt                       # Python dependencies
-├── Dockerfile                             # Cloud Run production container definition
-├── .env.example                           # Safe environment template (no secrets)
-├── course/                                # 11 In-Depth Course Modules (Explanation -> Practicals -> Learnings -> Destroy)
-│   ├── 01_beginner_foundations.md
-│   ├── 02_embeddinggemma2_architecture.md
-│   ├── 03_sarvam_corpus_chunking.md
-│   ├── 04_matryoshka_mrl_retrieval.md
-│   ├── 05_hybrid_bm25_rrf_search.md
-│   ├── 06_multimodal_audio_image_rag.md
-│   ├── 07_vertex_ai_grounded_generation.md
-│   ├── 08_gcp_bigquery_cloudrun_rag.md
-│   ├── 09_evaluation_benchmarking.md
-│   ├── 10_cli_and_ui_master_guide.md
-│   └── 11_teardown_and_cost_cleanup.md
-├── src/                                   # Core Modular RAG Engine
-│   ├── config.py                          # Environment & path settings
-│   ├── chunker.py                         # Structure-aware Markdown & code chunker
-│   ├── embedder.py                        # EmbeddingGemma 2 (Text + MRL + 740M Multimodal)
-│   ├── retriever.py                       # Dense, BM25, Hybrid RRF & MRL Funnel retrieval
-│   ├── generator.py                       # Vertex AI gemini-2.5-flash synthesis & LLM Judge
-│   ├── gcp_integration.py                 # GCS upload, BigQuery VECTOR_SEARCH & Cloud Teardown
-│   └── multimodal_rag.py                  # Audio WAV + Image PNG asset generator & indexer
-├── cli/
-│   └── rag_cli.py                         # 9-command Rich CLI application (including destroy)
-├── ui/
-│   └── app.py                             # FastAPI backend + 4-tab Interactive Web Studio
-├── scripts/
-│   ├── run_all_verifications.py           # End-to-end verification & benchmark suite
-│   ├── destroy_resources.sh               # Idempotent GCP & local teardown + verification script
-│   └── capture_ui_screenshots.py          # Headless Chromium screenshot automation
-└── data/
-    ├── index/                             # Pre-computed MRL (768/512/256/128) & multimodal vectors
-    └── artifacts/
-        ├── evaluation_report.json         # Full verification & benchmark report
-        ├── teardown_verification.txt      # Live verified cloud teardown proof
-        └── screenshots/                   # Captured Web UI Studio screenshots
+1. Pre-quiz (2 Qs)  →  2. Read docs/en.md  →  3. Run code/main.py  →  4. Do 3 exercises  →  5. Grab outputs/
+   quiz.json              The 6-Beat lesson      Modify & re-run         Easy / Med / Hard     prompt-*.md + skill-*.md
 ```
+
+1. **Test your intuition first** — Open the lesson's `quiz.json` and answer the two `"stage": "pre"` questions before reading.
+2. **Read `docs/en.md` top-to-bottom** — Every equation is derived from first principles and paired with its exact Python translation.
+3. **Run `code/main.py` and break it** — Change a hyperparameter ($k \in \{768, 512, 256, 128\}$, $k_1 = 1.5$, $b = 0.75$, $k_{\text{rrf}} = 60$) and observe the output.
+4. **Complete the 3 graded exercises** — Move from `[Easy]` to `[Medium]` to `[Hard]` at the bottom of `docs/en.md`.
+5. **Ship the artifacts** — Copy `outputs/prompt-*.md` and `outputs/skill-*.md` into your production project or install all 26 artifacts into your agent with `python3 scripts/install_skills.py skills --type all --layout flat --force`.
+
+---
+
+## Choose a learning path
+
+| Path | Who it's for | Phases & Lessons | Est. Time |
+|------|-------------|------------------|-----------|
+| **`beginner` (Full Zero-to-Production Track)** | Anyone learning embeddings, vector search, RAG, and Cloud FinOps from scratch | **All Phases (`00` $\rightarrow$ `04`, all 13 lessons)** | ~10 hrs |
+| **`rag-foundations` (Core Math + Hybrid Retrieval)** | Engineers who want from-scratch Cosine Similarity, Matryoshka (`MRL`), Markdown chunking, BM25, and Hybrid RRF | **Phase 01 (`01`–`03`) + Phase 02 (`01`–`03`)** | ~4.5 hrs |
+| **`multimodal` (Audio + Image + Text RAG)** | Builders indexing voice clips (`.wav`/`.mp3`), architecture diagrams (`.png`), and docs in one 768-D space | **Phase 01 (`02`–`03`) + Phase 03 (`01`)** | ~2.5 hrs |
+| **`gcp-production` (Vertex AI, BigQuery & FinOps Destroy)** | Cloud/MLOps engineers deploying grounded RAG on GCP with evaluation gates and `$0.00` teardown | **Phase 00 (`01`–`02`) + Phase 04 (`01`–`04`)** | ~4 hrs |
+
+---
+
+## The shape of the curriculum
+
+```mermaid
+graph LR
+  P0["Phase 0<br/>Setup & Tooling<br/>(2 lessons)"]
+  P1["Phase 1<br/>Math & Embeddings<br/>(3 lessons)"]
+  P2["Phase 2<br/>Retrieval Engineering<br/>(3 lessons)"]
+  P3["Phase 3<br/>Multimodal RAG<br/>(1 lesson)"]
+  P4["Phase 4<br/>Production & Cloud<br/>(4 lessons)"]
+
+  P0 --> P1
+  P1 --> P2
+  P1 --> P3
+  P2 --> P4
+  P3 --> P4
+```
+
+Five phases. Click any phase below to inspect its lessons, runnable scripts, quizzes, and shippable outputs.
+
+---
+
+## Contents
+
+<a id="phase-0"></a>
+### Phase 0: Setup & Tooling `2 lessons`
+> Verify your Python/PyTorch/GCP workstation, authenticate with Hugging Face & Google Cloud, and audit the 57-file Sarvam AI corpus.
+
+| # | Lesson | Code | Quiz | Outputs (Prompt + Skill) | Type |
+|:---:|--------|:----:|:----:|--------------------------|:----:|
+| 01 | [Dev Environment & Preflight Verification](phases/00-setup-and-tooling/01-dev-environment-and-preflight/docs/en.md) | [`main.py`](phases/00-setup-and-tooling/01-dev-environment-and-preflight/code/main.py) · [`verify.py`](phases/00-setup-and-tooling/01-dev-environment-and-preflight/code/verify.py) | [`quiz.json`](phases/00-setup-and-tooling/01-dev-environment-and-preflight/quiz.json) | [`prompt-env-check.md`](phases/00-setup-and-tooling/01-dev-environment-and-preflight/outputs/prompt-env-check.md) · [`skill-rag-preflight-auditor.md`](phases/00-setup-and-tooling/01-dev-environment-and-preflight/outputs/skill-rag-preflight-auditor.md) | Build |
+| 02 | [GCP, Hugging Face & Corpus Setup](phases/00-setup-and-tooling/02-gcp-hf-and-corpus-setup/docs/en.md) | [`main.py`](phases/00-setup-and-tooling/02-gcp-hf-and-corpus-setup/code/main.py) | [`quiz.json`](phases/00-setup-and-tooling/02-gcp-hf-and-corpus-setup/quiz.json) | [`prompt-corpus-audit.md`](phases/00-setup-and-tooling/02-gcp-hf-and-corpus-setup/outputs/prompt-corpus-audit.md) · [`skill-corpus-readiness-checker.md`](phases/00-setup-and-tooling/02-gcp-hf-and-corpus-setup/outputs/skill-corpus-readiness-checker.md) | Build |
+
+<details id="phase-1" open>
+<summary><b>Phase 1 — Math &amp; Embeddings</b> &nbsp;<code>3 lessons</code>&nbsp; <em>Vectors, L2 normalization, cosine similarity, asymmetric prompts, and Matryoshka truncation from first principles.</em></summary>
+<br/>
+
+| # | Lesson | Code | Quiz | Outputs (Prompt + Skill) | Type |
+|:---:|--------|:----:|:----:|--------------------------|:----:|
+| 01 | [Vectors, L2 Norms & Cosine Similarity from Scratch](phases/01-math-and-embeddings/01-vectors-norms-and-cosine-similarity/docs/en.md) | [`main.py`](phases/01-math-and-embeddings/01-vectors-norms-and-cosine-similarity/code/main.py) | [`quiz.json`](phases/01-math-and-embeddings/01-vectors-norms-and-cosine-similarity/quiz.json) | [`prompt-similarity-debugger.md`](phases/01-math-and-embeddings/01-vectors-norms-and-cosine-similarity/outputs/prompt-similarity-debugger.md) · [`skill-vector-space-auditor.md`](phases/01-math-and-embeddings/01-vectors-norms-and-cosine-similarity/outputs/skill-vector-space-auditor.md) | Build |
+| 02 | [`google/embeddinggemma-2` Architecture & Asymmetric Prompts](phases/01-math-and-embeddings/02-embeddinggemma2-architecture-and-prompts/docs/en.md) | [`main.py`](phases/01-math-and-embeddings/02-embeddinggemma2-architecture-and-prompts/code/main.py) | [`quiz.json`](phases/01-math-and-embeddings/02-embeddinggemma2-architecture-and-prompts/quiz.json) | [`prompt-prefix-architect.md`](phases/01-math-and-embeddings/02-embeddinggemma2-architecture-and-prompts/outputs/prompt-prefix-architect.md) · [`skill-embeddinggemma2-integrator.md`](phases/01-math-and-embeddings/02-embeddinggemma2-architecture-and-prompts/outputs/skill-embeddinggemma2-integrator.md) | Build |
+| 03 | [Matryoshka Representation Learning (MRL) & Truncation](phases/01-math-and-embeddings/03-matryoshka-representation-learning/docs/en.md) | [`main.py`](phases/01-math-and-embeddings/03-matryoshka-representation-learning/code/main.py) | [`quiz.json`](phases/01-math-and-embeddings/03-matryoshka-representation-learning/quiz.json) | [`prompt-mrl-capacity-planner.md`](phases/01-math-and-embeddings/03-matryoshka-representation-learning/outputs/prompt-mrl-capacity-planner.md) · [`skill-mrl-dimension-optimizer.md`](phases/01-math-and-embeddings/03-matryoshka-representation-learning/outputs/skill-mrl-dimension-optimizer.md) | Build |
+
+</details>
+
+<details id="phase-2" open>
+<summary><b>Phase 2 — Retrieval Engineering</b> &nbsp;<code>3 lessons</code>&nbsp; <em>Structure-aware Markdown chunking, Okapi BM25 from scratch, and Hybrid Reciprocal Rank Fusion (RRF).</em></summary>
+<br/>
+
+| # | Lesson | Code | Quiz | Outputs (Prompt + Skill) | Type |
+|:---:|--------|:----:|:----:|--------------------------|:----:|
+| 01 | [Structure-Aware Markdown Chunking](phases/02-retrieval-engineering/01-structure-aware-markdown-chunking/docs/en.md) | [`main.py`](phases/02-retrieval-engineering/01-structure-aware-markdown-chunking/code/main.py) | [`quiz.json`](phases/02-retrieval-engineering/01-structure-aware-markdown-chunking/quiz.json) | [`prompt-chunking-strategist.md`](phases/02-retrieval-engineering/01-structure-aware-markdown-chunking/outputs/prompt-chunking-strategist.md) · [`skill-markdown-chunk-architect.md`](phases/02-retrieval-engineering/01-structure-aware-markdown-chunking/outputs/skill-markdown-chunk-architect.md) | Build |
+| 02 | [Okapi BM25 Sparse Retrieval from Scratch](phases/02-retrieval-engineering/02-okapi-bm25-from-scratch/docs/en.md) | [`main.py`](phases/02-retrieval-engineering/02-okapi-bm25-from-scratch/code/main.py) | [`quiz.json`](phases/02-retrieval-engineering/02-okapi-bm25-from-scratch/quiz.json) | [`prompt-lexical-tuner.md`](phases/02-retrieval-engineering/02-okapi-bm25-from-scratch/outputs/prompt-lexical-tuner.md) · [`skill-bm25-index-builder.md`](phases/02-retrieval-engineering/02-okapi-bm25-from-scratch/outputs/skill-bm25-index-builder.md) | Build |
+| 03 | [Hybrid Search & Reciprocal Rank Fusion (RRF)](phases/02-retrieval-engineering/03-hybrid-search-and-rrf-fusion/docs/en.md) | [`main.py`](phases/02-retrieval-engineering/03-hybrid-search-and-rrf-fusion/code/main.py) | [`quiz.json`](phases/02-retrieval-engineering/03-hybrid-search-and-rrf-fusion/quiz.json) | [`prompt-hybrid-fusion-debugger.md`](phases/02-retrieval-engineering/03-hybrid-search-and-rrf-fusion/outputs/prompt-hybrid-fusion-debugger.md) · [`skill-hybrid-rag-architect.md`](phases/02-retrieval-engineering/03-hybrid-search-and-rrf-fusion/outputs/skill-hybrid-rag-architect.md) | Build |
+
+</details>
+
+<details id="phase-3" open>
+<summary><b>Phase 3 — Multimodal RAG</b> &nbsp;<code>1 lesson</code>&nbsp; <em>Cross-modal retrieval across text, PNG architecture cards, and WAV/MP3 audio samples in one unified 768-D vector space.</em></summary>
+<br/>
+
+| # | Lesson | Code | Quiz | Outputs (Prompt + Skill) | Type |
+|:---:|--------|:----:|:----:|--------------------------|:----:|
+| 01 | [Cross-Modal Audio & Image RAG with `embeddinggemma-2`](phases/03-multimodal-rag/01-cross-modal-audio-and-image-rag/docs/en.md) | [`main.py`](phases/03-multimodal-rag/01-cross-modal-audio-and-image-rag/code/main.py) | [`quiz.json`](phases/03-multimodal-rag/01-cross-modal-audio-and-image-rag/quiz.json) | [`prompt-multimodal-rag-designer.md`](phases/03-multimodal-rag/01-cross-modal-audio-and-image-rag/outputs/prompt-multimodal-rag-designer.md) · [`skill-cross-modal-index-engineer.md`](phases/03-multimodal-rag/01-cross-modal-audio-and-image-rag/outputs/skill-cross-modal-index-engineer.md) | Build |
+
+</details>
+
+<details id="phase-4" open>
+<summary><b>Phase 4 — Production &amp; Cloud</b> &nbsp;<code>4 lessons</code>&nbsp; <em>Vertex AI Gemini grounded generation, BigQuery vector search, IR evaluation metrics, and Cloud FinOps teardown to $0.00.</em></summary>
+<br/>
+
+| # | Lesson | Code | Quiz | Outputs (Prompt + Skill) | Type |
+|:---:|--------|:----:|:----:|--------------------------|:----:|
+| 01 | [Vertex AI Grounded Generation & Citations](phases/04-production-and-cloud/01-vertex-ai-grounded-generation-and-citations/docs/en.md) | [`main.py`](phases/04-production-and-cloud/01-vertex-ai-grounded-generation-and-citations/code/main.py) | [`quiz.json`](phases/04-production-and-cloud/01-vertex-ai-grounded-generation-and-citations/quiz.json) | [`prompt-grounded-rag-system.md`](phases/04-production-and-cloud/01-vertex-ai-grounded-generation-and-citations/outputs/prompt-grounded-rag-system.md) · [`skill-citation-guardrail-auditor.md`](phases/04-production-and-cloud/01-vertex-ai-grounded-generation-and-citations/outputs/skill-citation-guardrail-auditor.md) | Build |
+| 02 | [GCP Storage & BigQuery Vector Search (`COSINE_DISTANCE`)](phases/04-production-and-cloud/02-gcp-storage-and-bigquery-vector-search/docs/en.md) | [`main.py`](phases/04-production-and-cloud/02-gcp-storage-and-bigquery-vector-search/code/main.py) | [`quiz.json`](phases/04-production-and-cloud/02-gcp-storage-and-bigquery-vector-search/quiz.json) | [`prompt-bigquery-vector-architect.md`](phases/04-production-and-cloud/02-gcp-storage-and-bigquery-vector-search/outputs/prompt-bigquery-vector-architect.md) · [`skill-gcp-vector-ops.md`](phases/04-production-and-cloud/02-gcp-storage-and-bigquery-vector-search/outputs/skill-gcp-vector-ops.md) | Build |
+| 03 | [RAG Evaluation: IR Metrics (`Hit@K`, `MRR@K`, `NDCG@K`) & LLM Judge](phases/04-production-and-cloud/03-rag-evaluation-ir-metrics-and-llm-judge/docs/en.md) | [`main.py`](phases/04-production-and-cloud/03-rag-evaluation-ir-metrics-and-llm-judge/code/main.py) | [`quiz.json`](phases/04-production-and-cloud/03-rag-evaluation-ir-metrics-and-llm-judge/quiz.json) | [`prompt-rag-eval-judge.md`](phases/04-production-and-cloud/03-rag-evaluation-ir-metrics-and-llm-judge/outputs/prompt-rag-eval-judge.md) · [`skill-rag-evaluation-harness.md`](phases/04-production-and-cloud/03-rag-evaluation-ir-metrics-and-llm-judge/outputs/skill-rag-evaluation-harness.md) | Build |
+| 04 | [CLI/UI Operations & Cloud FinOps Resource Destroy (`$0.00`)](phases/04-production-and-cloud/04-cli-ui-operations-and-resource-destroy/docs/en.md) | [`main.py`](phases/04-production-and-cloud/04-cli-ui-operations-and-resource-destroy/code/main.py) | [`quiz.json`](phases/04-production-and-cloud/04-cli-ui-operations-and-resource-destroy/quiz.json) | [`prompt-finops-teardown-auditor.md`](phases/04-production-and-cloud/04-cli-ui-operations-and-resource-destroy/outputs/prompt-finops-teardown-auditor.md) · [`skill-cloud-rag-destroyer.md`](phases/04-production-and-cloud/04-cli-ui-operations-and-resource-destroy/outputs/skill-cloud-rag-destroyer.md) | Build |
+
+</details>
+
+---
+
+## The shape of a lesson
+
+Every lesson follows the same six-beat flow (`LESSON_TEMPLATE.md`) so you always know where you are:
+
+```mermaid
+graph LR
+  A["1. The Problem<br/>Why naive RAG fails"] --> B["2. The Concept<br/>Math + Mermaid diagram"]
+  B --> C["3. Build It<br/>Pure Python in code/main.py"]
+  C --> D["4. Use It<br/>Production CLI &amp; Web UI"]
+  D --> E["5. Ship It<br/>outputs/prompt-*.md &amp; skill-*.md"]
+  E --> F["6. Exercises<br/>Easy / Medium / Hard + Quiz"]
+```
+
+---
+
+## Production CLI & 4-Tab Web Studio
+
+In addition to the 13 self-contained lessons under `phases/`, this repository includes the full production RAG engine (`src/`), 8-command Typer CLI (`cli/rag_cli.py`), 6 interactive terminal labs (`scripts/interactive_learning_labs.py`), and 4-tab Gradio Web Studio (`ui/app.py`):
+
+```bash
+# Run all 6 interactive terminal labs
+python3 scripts/interactive_learning_labs.py --lab all
+
+# Build or refresh the 244-chunk Sarvam Docs index across 768/512/256/128 MRL dims
+python -m cli.rag_cli index
+
+# Hybrid RRF retrieval + Vertex AI Gemini grounded answer with [Doc i] citations
+python -m cli.rag_cli query "How do I authenticate to Sarvam APIs and what is Bulbul v3?" --dim 256 --mode hybrid
+
+# Matryoshka (MRL) dimension benchmark (768 vs 512 vs 256 vs 128)
+python -m cli.rag_cli mrl-benchmark "How does Saaras v3 handle speech-to-text?"
+
+# Multimodal cross-modal retrieval (Text -> Audio/Image/Interleaved)
+python -m cli.rag_cli multimodal-query "Voice cloning speaker audio and TTS architecture"
+
+# Launch the 4-Tab Gradio Web Studio on http://localhost:7860
+python -m ui.app
+```
+
+| Tab 1: Hybrid RAG Studio | Tab 2: Matryoshka (`MRL`) Explorer |
+| :---: | :---: |
+| ![Tab 1: Hybrid RAG Studio](data/artifacts/screenshots/ui_tab1_rag_studio.png) | ![Tab 2: Matryoshka Explorer](data/artifacts/screenshots/ui_tab2_mrl_explorer.png) |
+| **Tab 3: Multimodal Audio & Image Lab** | **Tab 4: GCP BigQuery Vector Search** |
+| ![Tab 3: Multimodal Lab](data/artifacts/screenshots/ui_tab3_multimodal_lab.png) | ![Tab 4: GCP BigQuery](data/artifacts/screenshots/ui_tab4_gcp_bigquery.png) |
+
+---
+
+## Cloud FinOps Teardown (`destroy`)
+
+Never leave cloud storage or data warehouse artifacts accruing charges after finishing your experiments. [Phase 04 · Lesson 04](phases/04-production-and-cloud/04-cli-ui-operations-and-resource-destroy/docs/en.md) teaches and verifies idempotent teardown:
+
+```bash
+# Option A: One-command automated Python teardown + post-delete verification
+python -m cli.rag_cli destroy --yes
+
+# Option B: Direct gcloud / bq CLI teardown
+bq rm -r -f -d genai-511910:sarvam_rag
+gcloud storage rm --recursive gs://genai-511910-sarvam-rag
+```
+
+---
+
+## The Toolkit
+
+| Script / Guide | Purpose |
+|----------------|---------|
+| [`scripts/audit_lessons.py`](scripts/audit_lessons.py) | Validates rules `L001`–`L010` (`docs/en.md`, `code/`, `quiz.json` schema, internal relative links) across all 13 lessons |
+| [`scripts/lesson_run.py`](scripts/lesson_run.py) | Byte-compiles or executes (`--execute --strict`) every lesson's `code/main.py` |
+| [`scripts/install_skills.py`](scripts/install_skills.py) | Exports all 26 lesson prompts (`prompt-*.md`) and skills (`skill-*.md`) into [`skills/`](skills/) with [`skills/manifest.json`](skills/manifest.json) |
+| [`scripts/interactive_learning_labs.py`](scripts/interactive_learning_labs.py) | 6 interactive step-by-step terminal labs covering the entire RAG lifecycle |
+| [`LESSON_TEMPLATE.md`](LESSON_TEMPLATE.md) | Canonical 6-Beat template for authoring new lessons |
+| [`ROADMAP.md`](ROADMAP.md) | Phase and lesson completion tracker |
+| [`cheatsheets/sarvam-rag.md`](cheatsheets/sarvam-rag.md) | One-page quick reference for formulas, hyperparameters, and CLI commands |
+| [`course/`](course/) | Deep-dive companion textbook modules (`MODULE_00` through `MODULE_08` + `PRACTICAL_HANDBOOK.md`) |
+
+---
+
+## License
+
+MIT. Use it however you want — fork it, teach it, ship it in production.

@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Why does adding raw BM25 scores and cosine similarity scores (0.5 * cosine + 0.5 * bm25) fail in production?",
+    "options": [
+      "Because Python cannot add floats",
+      "Because cosine similarity is bounded in [-1, 1] whereas BM25 is unbounded in [0, 25+], so BM25 numerically overwhelms cosine similarity",
+      "Because BM25 scores are always negative",
+      "Because cosine similarity is an integer"
+    ],
+    "correct": 1,
+    "explanation": "Raw score addition suffers from severe scale mismatch: a BM25 score of 15.0 is ~20x larger than a strong cosine similarity of 0.80.",
+    "stage": "pre"
+  },
+  {
+    "question": "How does Reciprocal Rank Fusion (RRF) make hybrid search immune to score scale differences?",
+    "options": [
+      "By multiplying BM25 by 0",
+      "By converting each retriever's raw scores into 1-based ordinal ranks (1, 2, 3, ...) and summing w_r / (k + rank_r(d))",
+      "By taking the square root of BM25",
+      "By sorting documents by file size"
+    ],
+    "correct": 1,
+    "explanation": "Ordinal ranks depend only on monotonic ordering, making RRF completely invariant to whether a retriever outputs scores in [-1, 1] or [0, 1000].",
+    "stage": "pre"
+  },
+  {
+    "question": "What is the role of the constant k = 60 in the RRF denominator 1 / (k + rank(d))?",
+    "options": [
+      "It limits the index to 60 documents",
+      "It dampens the gap between rank #1 and rank #2/#3 so a single noisy #1 outlier cannot overpower a document that ranks consistently near the top (#2/#2) in both retrievers",
+      "It sets the timeout to 60 seconds",
+      "It truncates embeddings to 60 dimensions"
+    ],
+    "correct": 1,
+    "explanation": "With k = 60, the relative difference between rank 1 (1/61) and rank 2 (1/62) is gentle, ensuring multi-retriever consensus beats single-retriever outliers.",
+    "stage": "post"
+  },
+  {
+    "question": "When a user queries 'What is the speaker parameter for bulbul:v3 text-to-speech?', how do Dense and BM25 work together in Hybrid RRF?",
+    "options": [
+      "BM25 locks onto exact tokens 'bulbul:v3' and 'speaker', while Dense EmbeddingGemma-2 captures the semantic intent of configuring voice synthesis parameters; RRF promotes the chunk that ranks at the top of both",
+      "Only BM25 runs and Dense is skipped",
+      "Only Dense runs and BM25 is skipped",
+      "Both return random ranks"
+    ],
+    "correct": 0,
+    "explanation": "Hybrid RRF combines lexical exactness on versioned identifiers (`bulbul:v3`) with semantic understanding of natural language questions.",
+    "stage": "post"
+  }
+]

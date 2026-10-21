@@ -1,0 +1,50 @@
+[
+  {
+    "question": "What does it mean for `python -m cli.rag_cli destroy --yes` to be idempotent?",
+    "options": [
+      "It can only be run once ever",
+      "Running it once deletes the BigQuery dataset and GCS bucket; running it a second or third time cleanly reports `already_absent` and exits with code 0 without crashing on 404 NotFound",
+      "It doubles the number of buckets",
+      "It requires a GPU"
+    ],
+    "correct": 1,
+    "explanation": "Idempotency (T(T(S)) = T(S)) ensures automated teardown scripts and CI cleanup jobs can be re-executed safely at any time.",
+    "stage": "pre"
+  },
+  {
+    "question": "Why does deleting a non-empty GCS bucket or non-empty BigQuery dataset fail unless cascade flags (`force=True`, `delete_contents=True`) are used?",
+    "options": [
+      "Because Google Cloud prevents accidental container deletion when child blobs or child tables still exist inside",
+      "Because Python does not support deleting folders",
+      "Because buckets are read-only",
+      "Because SQL does not have a DROP statement"
+    ],
+    "correct": 0,
+    "explanation": "Cloud storage and dataset APIs require either deleting child objects/tables first or explicitly passing cascade deletion flags.",
+    "stage": "pre"
+  },
+  {
+    "question": "When you run `python -m cli.rag_cli destroy --yes` WITHOUT `--include-local`, what happens to your local MRL `.npy` embeddings and `chunks.jsonl`?",
+    "options": [
+      "They are preserved intact in `data/index/` so you can continue running offline CLI and Web UI searches at $0.00 cloud cost",
+      "They are deleted from your laptop",
+      "They are uploaded to AWS",
+      "They are encrypted"
+    ],
+    "correct": 0,
+    "explanation": "By default, `destroy` only tears down billable Google Cloud resources (BigQuery + GCS) while keeping your local `.npy` index ready for instant offline use.",
+    "stage": "post"
+  },
+  {
+    "question": "Which two independent CLI commands verify that both the GCS bucket and BigQuery dataset have been completely removed from Google Cloud?",
+    "options": [
+      "`gcloud storage ls gs://genai-511910-sarvam-rag` and `bq show genai-511910:sarvam_rag` (both should return Not Found)",
+      "`git status` and `git log`",
+      "`pip list` and `python --version`",
+      "`ls -la` and `pwd`"
+    ],
+    "correct": 0,
+    "explanation": "Checking directly with `gcloud storage ls` and `bq show` provides independent verification that zero billable cloud resources remain.",
+    "stage": "post"
+  }
+]

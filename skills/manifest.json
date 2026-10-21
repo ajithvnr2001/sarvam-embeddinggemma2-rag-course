@@ -1,0 +1,456 @@
+{
+  "schema_version": 1,
+  "layout": "flat",
+  "totals": {
+    "artifacts": 26,
+    "by_type": {
+      "prompt": 13,
+      "skill": 13
+    },
+    "by_phase": {
+      "phase-00": 4,
+      "phase-01": 6,
+      "phase-02": 6,
+      "phase-03": 2,
+      "phase-04": 8
+    }
+  },
+  "artifacts": [
+    {
+      "type": "prompt",
+      "name": "prompt-env-check",
+      "phase": 0,
+      "lesson": 1,
+      "version": "",
+      "description": "Diagnose and fix Python, Hugging Face EmbeddingGemma-2, and Google Cloud RAG environment issues",
+      "tags": [
+        "setup",
+        "environment",
+        "preflight",
+        "gcp",
+        "huggingface"
+      ],
+      "source": "phases/00-setup-and-tooling/01-dev-environment-and-preflight/outputs/prompt-env-check.md",
+      "target": "prompt-env-check.md"
+    },
+    {
+      "type": "skill",
+      "name": "rag-preflight-auditor",
+      "phase": 0,
+      "lesson": 1,
+      "version": "1.0.0",
+      "description": "Audit a local or cloud Python workspace for EmbeddingGemma-2, Sarvam corpus, and GCP readiness before running RAG workloads.",
+      "tags": [
+        "preflight",
+        "environment",
+        "rag",
+        "gcp",
+        "verification"
+      ],
+      "source": "phases/00-setup-and-tooling/01-dev-environment-and-preflight/outputs/skill-rag-preflight-auditor.md",
+      "target": "rag-preflight-auditor.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-corpus-audit",
+      "phase": 0,
+      "lesson": 2,
+      "version": "",
+      "description": "Analyze corpus structural statistics and recommend an optimal RAG chunking and indexing strategy",
+      "tags": [
+        "corpus",
+        "profiling",
+        "chunking",
+        "markdown",
+        "rag"
+      ],
+      "source": "phases/00-setup-and-tooling/02-gcp-hf-and-corpus-setup/outputs/prompt-corpus-audit.md",
+      "target": "prompt-corpus-audit.md"
+    },
+    {
+      "type": "skill",
+      "name": "corpus-readiness-checker",
+      "phase": 0,
+      "lesson": 2,
+      "version": "1.0.0",
+      "description": "Profile a Markdown documentation directory for RAG ingestion readiness and verify credential safety.",
+      "tags": [
+        "corpus",
+        "markdown",
+        "security",
+        "rag",
+        "audit"
+      ],
+      "source": "phases/00-setup-and-tooling/02-gcp-hf-and-corpus-setup/outputs/skill-corpus-readiness-checker.md",
+      "target": "corpus-readiness-checker.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-similarity-debugger",
+      "phase": 1,
+      "lesson": 1,
+      "version": "",
+      "description": "Diagnose ranking anomalies, NaN scores, and magnitude bias in vector similarity search",
+      "tags": [
+        "vectors",
+        "cosine-similarity",
+        "l2-norm",
+        "debugging",
+        "rag"
+      ],
+      "source": "phases/01-math-and-embeddings/01-vectors-norms-and-cosine-similarity/outputs/prompt-similarity-debugger.md",
+      "target": "prompt-similarity-debugger.md"
+    },
+    {
+      "type": "skill",
+      "name": "vector-space-auditor",
+      "phase": 1,
+      "lesson": 1,
+      "version": "1.0.0",
+      "description": "Audit an embedding matrix (.npy or JSONL) for unit-norm compliance, numerical stability, and anisotropy.",
+      "tags": [
+        "embeddings",
+        "cosine-similarity",
+        "l2-norm",
+        "audit"
+      ],
+      "source": "phases/01-math-and-embeddings/01-vectors-norms-and-cosine-similarity/outputs/skill-vector-space-auditor.md",
+      "target": "vector-space-auditor.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-prefix-architect",
+      "phase": 1,
+      "lesson": 2,
+      "version": "",
+      "description": "Design asymmetric query and document instruction templates for neural embedding models",
+      "tags": [
+        "embeddinggemma-2",
+        "prompts",
+        "asymmetric-search",
+        "pooling"
+      ],
+      "source": "phases/01-math-and-embeddings/02-embeddinggemma2-architecture-and-prompts/outputs/prompt-prefix-architect.md",
+      "target": "prompt-prefix-architect.md"
+    },
+    {
+      "type": "skill",
+      "name": "embeddinggemma2-integrator",
+      "phase": 1,
+      "lesson": 2,
+      "version": "1.0.0",
+      "description": "Audit and implement Hugging Face google/embeddinggemma-2 encoding with masked mean pooling and asymmetric prompts.",
+      "tags": [
+        "embeddinggemma-2",
+        "transformers",
+        "pooling",
+        "rag"
+      ],
+      "source": "phases/01-math-and-embeddings/02-embeddinggemma2-architecture-and-prompts/outputs/skill-embeddinggemma2-integrator.md",
+      "target": "embeddinggemma2-integrator.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-mrl-capacity-planner",
+      "phase": 1,
+      "lesson": 3,
+      "version": "",
+      "description": "Calculate vector RAM, cloud storage costs, and two-stage Matryoshka retrieval architectures",
+      "tags": [
+        "mrl",
+        "matryoshka",
+        "capacity-planning",
+        "vector-search",
+        "bigquery"
+      ],
+      "source": "phases/01-math-and-embeddings/03-matryoshka-representation-learning/outputs/prompt-mrl-capacity-planner.md",
+      "target": "prompt-mrl-capacity-planner.md"
+    },
+    {
+      "type": "skill",
+      "name": "mrl-dimension-optimizer",
+      "phase": 1,
+      "lesson": 3,
+      "version": "1.0.0",
+      "description": "Benchmark Matryoshka embedding dimensions (768, 512, 256, 128) and select the optimal production dimension.",
+      "tags": [
+        "mrl",
+        "matryoshka",
+        "embeddings",
+        "optimization",
+        "rag"
+      ],
+      "source": "phases/01-math-and-embeddings/03-matryoshka-representation-learning/outputs/skill-mrl-dimension-optimizer.md",
+      "target": "mrl-dimension-optimizer.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-chunking-strategist",
+      "phase": 2,
+      "lesson": 1,
+      "version": "",
+      "description": "Design structure-preserving chunking pipelines for Markdown, tables, and code documentation",
+      "tags": [
+        "chunking",
+        "markdown",
+        "rag",
+        "document-engineering"
+      ],
+      "source": "phases/02-retrieval-engineering/01-structure-aware-markdown-chunking/outputs/prompt-chunking-strategist.md",
+      "target": "prompt-chunking-strategist.md"
+    },
+    {
+      "type": "skill",
+      "name": "markdown-chunk-architect",
+      "phase": 2,
+      "lesson": 1,
+      "version": "1.0.0",
+      "description": "Audit and build structure-aware Markdown chunkers that preserve code blocks, tables, and hierarchical breadcrumbs.",
+      "tags": [
+        "chunking",
+        "markdown",
+        "parser",
+        "rag"
+      ],
+      "source": "phases/02-retrieval-engineering/01-structure-aware-markdown-chunking/outputs/skill-markdown-chunk-architect.md",
+      "target": "markdown-chunk-architect.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-lexical-tuner",
+      "phase": 2,
+      "lesson": 2,
+      "version": "",
+      "description": "Design domain-aware tokenizers and tune Okapi BM25 hyperparameters (k1, b) for technical RAG",
+      "tags": [
+        "bm25",
+        "lexical-search",
+        "tokenization",
+        "ir"
+      ],
+      "source": "phases/02-retrieval-engineering/02-okapi-bm25-from-scratch/outputs/prompt-lexical-tuner.md",
+      "target": "prompt-lexical-tuner.md"
+    },
+    {
+      "type": "skill",
+      "name": "bm25-index-builder",
+      "phase": 2,
+      "lesson": 2,
+      "version": "1.0.0",
+      "description": "Build and audit technical Okapi BM25 indices that preserve API identifiers, version codes, and locale tags.",
+      "tags": [
+        "bm25",
+        "tokenizer",
+        "lexical-search",
+        "rag"
+      ],
+      "source": "phases/02-retrieval-engineering/02-okapi-bm25-from-scratch/outputs/skill-bm25-index-builder.md",
+      "target": "bm25-index-builder.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-hybrid-fusion-debugger",
+      "phase": 2,
+      "lesson": 3,
+      "version": "",
+      "description": "Diagnose and tune Hybrid Search (Dense + BM25 + RRF) ranking behavior",
+      "tags": [
+        "hybrid-search",
+        "rrf",
+        "bm25",
+        "dense-retrieval",
+        "rag"
+      ],
+      "source": "phases/02-retrieval-engineering/03-hybrid-search-and-rrf-fusion/outputs/prompt-hybrid-fusion-debugger.md",
+      "target": "prompt-hybrid-fusion-debugger.md"
+    },
+    {
+      "type": "skill",
+      "name": "hybrid-rag-architect",
+      "phase": 2,
+      "lesson": 3,
+      "version": "1.0.0",
+      "description": "Implement and evaluate calibration-free Hybrid Search combining EmbeddingGemma-2 dense vectors and Okapi BM25 via Reciprocal Rank Fusion.",
+      "tags": [
+        "hybrid-search",
+        "rrf",
+        "bm25",
+        "embeddinggemma-2",
+        "rag"
+      ],
+      "source": "phases/02-retrieval-engineering/03-hybrid-search-and-rrf-fusion/outputs/skill-hybrid-rag-architect.md",
+      "target": "hybrid-rag-architect.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-multimodal-rag-designer",
+      "phase": 3,
+      "lesson": 1,
+      "version": "",
+      "description": "Architect unified cross-modal RAG pipelines over text, technical diagrams, and speech audio",
+      "tags": [
+        "multimodal",
+        "audio-rag",
+        "vision-rag",
+        "embeddinggemma-2"
+      ],
+      "source": "phases/03-multimodal-rag/01-cross-modal-audio-and-image-rag/outputs/prompt-multimodal-rag-designer.md",
+      "target": "prompt-multimodal-rag-designer.md"
+    },
+    {
+      "type": "skill",
+      "name": "cross-modal-index-engineer",
+      "phase": 3,
+      "lesson": 1,
+      "version": "1.0.0",
+      "description": "Build and validate unified Text + Image + 16kHz Audio vector indices on S^767.",
+      "tags": [
+        "multimodal",
+        "audio",
+        "vision",
+        "embeddinggemma-2",
+        "rag"
+      ],
+      "source": "phases/03-multimodal-rag/01-cross-modal-audio-and-image-rag/outputs/skill-cross-modal-index-engineer.md",
+      "target": "cross-modal-index-engineer.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-grounded-rag-system",
+      "phase": 4,
+      "lesson": 1,
+      "version": "",
+      "description": "Production closed-world system prompt for Vertex AI Gemini RAG synthesis with mandatory [Doc i] citations",
+      "tags": [
+        "vertex-ai",
+        "gemini",
+        "grounding",
+        "citations",
+        "rag"
+      ],
+      "source": "phases/04-production-and-cloud/01-vertex-ai-grounded-generation-and-citations/outputs/prompt-grounded-rag-system.md",
+      "target": "prompt-grounded-rag-system.md"
+    },
+    {
+      "type": "skill",
+      "name": "citation-guardrail-auditor",
+      "phase": 4,
+      "lesson": 1,
+      "version": "1.0.0",
+      "description": "Deterministically audit LLM-generated RAG answers for phantom citations, uncited sentences, and numerical hallucinations.",
+      "tags": [
+        "guardrails",
+        "citations",
+        "hallucination",
+        "vertex-ai",
+        "rag"
+      ],
+      "source": "phases/04-production-and-cloud/01-vertex-ai-grounded-generation-and-citations/outputs/skill-citation-guardrail-auditor.md",
+      "target": "citation-guardrail-auditor.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-bigquery-vector-architect",
+      "phase": 4,
+      "lesson": 2,
+      "version": "",
+      "description": "Design serverless BigQuery vector tables, COSINE_DISTANCE SQL queries, and hybrid metadata filters",
+      "tags": [
+        "bigquery",
+        "gcp",
+        "vector-search",
+        "sql",
+        "mrl"
+      ],
+      "source": "phases/04-production-and-cloud/02-gcp-storage-and-bigquery-vector-search/outputs/prompt-bigquery-vector-architect.md",
+      "target": "prompt-bigquery-vector-architect.md"
+    },
+    {
+      "type": "skill",
+      "name": "gcp-vector-ops",
+      "phase": 4,
+      "lesson": 2,
+      "version": "1.0.0",
+      "description": "Validate BigQuery vector JSONL exports, verify REPEATED FLOAT64 array integrity, and audit COSINE_DISTANCE SQL queries.",
+      "tags": [
+        "gcp",
+        "bigquery",
+        "gcs",
+        "vector-search",
+        "rag"
+      ],
+      "source": "phases/04-production-and-cloud/02-gcp-storage-and-bigquery-vector-search/outputs/skill-gcp-vector-ops.md",
+      "target": "gcp-vector-ops.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-rag-eval-judge",
+      "phase": 4,
+      "lesson": 3,
+      "version": "",
+      "description": "LLM-as-a-Judge rubric for evaluating RAG Faithfulness, Citation Accuracy, and Answer Completeness",
+      "tags": [
+        "evaluation",
+        "llm-judge",
+        "faithfulness",
+        "metrics",
+        "rag"
+      ],
+      "source": "phases/04-production-and-cloud/03-rag-evaluation-ir-metrics-and-llm-judge/outputs/prompt-rag-eval-judge.md",
+      "target": "prompt-rag-eval-judge.md"
+    },
+    {
+      "type": "skill",
+      "name": "rag-evaluation-harness",
+      "phase": 4,
+      "lesson": 3,
+      "version": "1.0.0",
+      "description": "Execute retrieval (Hit@K, MRR@K, NDCG@K) and generation faithfulness regression gates on a RAG pipeline.",
+      "tags": [
+        "evaluation",
+        "mrr",
+        "ndcg",
+        "ci-cd",
+        "rag"
+      ],
+      "source": "phases/04-production-and-cloud/03-rag-evaluation-ir-metrics-and-llm-judge/outputs/skill-rag-evaluation-harness.md",
+      "target": "rag-evaluation-harness.md"
+    },
+    {
+      "type": "prompt",
+      "name": "prompt-finops-teardown-auditor",
+      "phase": 4,
+      "lesson": 4,
+      "version": "",
+      "description": "Audit Google Cloud RAG deployments for orphaned resources and generate idempotent teardown plans",
+      "tags": [
+        "finops",
+        "teardown",
+        "destroy",
+        "gcp",
+        "bigquery",
+        "gcs"
+      ],
+      "source": "phases/04-production-and-cloud/04-cli-ui-operations-and-resource-destroy/outputs/prompt-finops-teardown-auditor.md",
+      "target": "prompt-finops-teardown-auditor.md"
+    },
+    {
+      "type": "skill",
+      "name": "cloud-rag-destroyer",
+      "phase": 4,
+      "lesson": 4,
+      "version": "1.0.0",
+      "description": "Execute and verify idempotent Google Cloud resource teardown (BigQuery + GCS) down to $0.00 ongoing cost.",
+      "tags": [
+        "destroy",
+        "teardown",
+        "finops",
+        "gcp",
+        "bigquery",
+        "gcs"
+      ],
+      "source": "phases/04-production-and-cloud/04-cli-ui-operations-and-resource-destroy/outputs/skill-cloud-rag-destroyer.md",
+      "target": "cloud-rag-destroyer.md"
+    }
+  ]
+}

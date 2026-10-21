@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Why is measuring Hit@5 alone dangerous when evaluating a RAG retriever?",
+    "options": [
+      "Because Hit@5 can be negative",
+      "Because Hit@5 gives the exact same score (1.0) whether the correct chunk is ranked #1 or buried at #5, hiding ranking degradation",
+      "Because Hit@5 only works on BM25",
+      "Because Hit@5 requires a GPU"
+    ],
+    "correct": 1,
+    "explanation": "Hit@K is position-insensitive within the top-K window; pairing it with MRR@K and NDCG@K exposes whether relevant chunks are actually ranked at the top.",
+    "stage": "pre"
+  },
+  {
+    "question": "If the first relevant chunk for a query appears at Rank #2 (1-based), what is that query's Reciprocal Rank (RR) score?",
+    "options": [
+      "1.0",
+      "0.5 (since 1 / 2 = 0.5)",
+      "0.2",
+      "2.0"
+    ],
+    "correct": 1,
+    "explanation": "Reciprocal Rank is 1 / rank_first_hit = 1 / 2 = 0.5.",
+    "stage": "pre"
+  },
+  {
+    "question": "What advantage does NDCG@K have over MRR@K when a query requires synthesizing facts from 2 or 3 distinct chunks?",
+    "options": [
+      "NDCG@K is faster to type",
+      "MRR@K only looks at the single highest-ranked relevant chunk, whereas NDCG@K sums log-discounted gains across ALL relevant chunks in the top-K list",
+      "NDCG@K ignores rank positions",
+      "NDCG@K does not require ground-truth labels"
+    ],
+    "correct": 1,
+    "explanation": "Multi-hop or multi-section questions need multiple relevant chunks in the top-K context; NDCG@K measures the position quality of all of them.",
+    "stage": "post"
+  },
+  {
+    "question": "What are the two independent axes that must be evaluated in an end-to-end RAG CI/CD pipeline?",
+    "options": [
+      "Font size and background color",
+      "Retrieval Ranking Quality (Hit@K, MRR@K, NDCG@K) and Generation Grounding Quality (Citation Faithfulness & Answer Relevance)",
+      "File name length and line count",
+      "CPU temperature and fan speed"
+    ],
+    "correct": 1,
+    "explanation": "Decomposing evaluation into Retrieval Metrics and Generation Metrics tells you immediately whether a failure came from the retriever (`src/retriever.py`) or the generator (`src/generator.py`).",
+    "stage": "post"
+  }
+]

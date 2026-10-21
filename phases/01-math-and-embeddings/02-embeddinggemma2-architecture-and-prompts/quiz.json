@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Why does google/embeddinggemma-2 use different prompt prefixes for queries ('task: search result | query: ...') and documents ('title: ... | text: ...')?",
+    "options": [
+      "To make the strings longer so they use more RAM",
+      "Because question-to-passage retrieval is asymmetric: short questions and long factual passages have different syntactic structures that must be mapped into aligned locations on the unit hypersphere",
+      "Because Python strings require a pipe character",
+      "To encrypt the document titles"
+    ],
+    "correct": 1,
+    "explanation": "Asymmetric task prefixes instruct the encoder to project short interrogative queries and long declarative documents into mutually aligned coordinates.",
+    "stage": "pre"
+  },
+  {
+    "question": "What happens if you compute last_hidden_state.mean(dim=1) on a padded batch without multiplying by the attention mask?",
+    "options": [
+      "The code raises a SyntaxError",
+      "Padding tokens ([PAD]) are averaged into the embedding, causing a short sentence's vector to change depending on the max sequence length of the batch",
+      "The embedding automatically becomes 128-dimensional",
+      "Nothing changes because [PAD] tokens always have hidden state 0"
+    ],
+    "correct": 1,
+    "explanation": "Transformer layers apply bias terms and LayerNorm to every position, so [PAD] positions have non-zero hidden states that corrupt unmasked averages.",
+    "stage": "pre"
+  },
+  {
+    "question": "In the masked mean pooling equation p = (sum_t m_t * h_t) / sum_t m_t, what does the denominator sum_t m_t represent?",
+    "options": [
+      "The vocabulary size (256,000)",
+      "The exact number of non-padding (real) tokens in that specific sequence",
+      "The batch size B",
+      "The embedding dimension d (768)"
+    ],
+    "correct": 1,
+    "explanation": "Since m_t is 1 for real tokens and 0 for padding, sum_t m_t counts the true sequence length of each item in the batch.",
+    "stage": "post"
+  },
+  {
+    "question": "Why do we prepend 'title: {title} | text: {content}' to every chunk in src/chunker.py?",
+    "options": [
+      "So chunks that use pronouns or relative references ('This endpoint accepts...') retain their parent document and section context inside the dense vector",
+      "Because BM25 only indexes the word 'title'",
+      "To delete Markdown tables",
+      "To reduce the vector dimension"
+    ],
+    "correct": 0,
+    "explanation": "Injecting the document and section title into the embedding prompt disambiguates chunks whose body text alone lacks the product or endpoint name.",
+    "stage": "post"
+  }
+]

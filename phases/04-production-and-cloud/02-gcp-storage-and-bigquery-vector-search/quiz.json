@@ -1,0 +1,50 @@
+[
+  {
+    "question": "How is an embedding vector column defined in a Google BigQuery table schema?",
+    "options": [
+      "As a comma-separated STRING column",
+      "As an ARRAY<FLOAT64> column (represented in JSON schema as type: 'FLOAT64', mode: 'REPEATED')",
+      "As a BOOL column",
+      "As a TIMESTAMP column"
+    ],
+    "correct": 1,
+    "explanation": "BigQuery represents native vector embeddings as REPEATED FLOAT64 (ARRAY<FLOAT64>) columns, required by COSINE_DISTANCE and EUCLIDEAN_DISTANCE.",
+    "stage": "pre"
+  },
+  {
+    "question": "Since BigQuery's COSINE_DISTANCE(u, v) equals 1 - cosine_similarity(u, v), which SQL ORDER BY direction must you use to retrieve the most relevant chunks first?",
+    "options": [
+      "ORDER BY cosine_distance ASC (smallest distance = highest similarity)",
+      "ORDER BY cosine_distance DESC",
+      "ORDER BY RAND()",
+      "ORDER BY chunk_id DESC"
+    ],
+    "correct": 0,
+    "explanation": "When cosine_similarity = 1.0 (identical direction), COSINE_DISTANCE = 1 - 1.0 = 0.0. Sorting ASC puts the closest vectors (distance near 0) at rank #1.",
+    "stage": "pre"
+  },
+  {
+    "question": "Why did we export 256-D Matryoshka vectors (`bq_vectors_256d.jsonl`) to BigQuery instead of full 768-D vectors?",
+    "options": [
+      "Because BigQuery rejects arrays longer than 300 elements",
+      "Because 256-D MRL vectors retain 100% Hit@5 accuracy on our Sarvam benchmark while reducing BigQuery storage and per-query column scan bytes by 3.0x",
+      "Because 256 is a power of 2 and SQL only supports powers of 2",
+      "To disable cosine similarity"
+    ],
+    "correct": 1,
+    "explanation": "BigQuery on-demand pricing charges by bytes scanned; 256-D MRL vectors cut vector column bytes by 66.7% with zero loss in top-5 retrieval accuracy.",
+    "stage": "post"
+  },
+  {
+    "question": "Why should you pass @query_vector and @category_filter via BigQuery QueryJobConfig parameters rather than string-interpolating them into SQL?",
+    "options": [
+      "To prevent SQL injection on filter strings and avoid giant SQL query text parsing overhead on 256-element float arrays",
+      "Because Python f-strings cannot format floats",
+      "Because BigQuery does not support SELECT statements without parameters",
+      "To make the query slower"
+    ],
+    "correct": 0,
+    "explanation": "Bound query parameters (`ArrayQueryParameter`, `ScalarQueryParameter`) guarantee SQL injection safety and allow BigQuery to cache the execution plan.",
+    "stage": "post"
+  }
+]

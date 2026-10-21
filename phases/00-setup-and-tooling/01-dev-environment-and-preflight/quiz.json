@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Why does this curriculum separate 'Build It' (phases/**/code/main.py) from 'Use It' (src/, cli/, ui/)?",
+    "options": [
+      "Because Python cannot connect to Google Cloud directly",
+      "So you can learn and verify every mathematical formula and algorithm from scratch in <2 seconds offline before running it at production scale on EmbeddingGemma-2 and GCP",
+      "Because BM25 only works in the command line",
+      "To avoid writing unit tests"
+    ],
+    "correct": 1,
+    "explanation": "Building from scratch first removes black-box magic and cloud dependencies while learning core concepts; 'Use It' then applies the exact same math on real google/embeddinggemma-2 weights, Sarvam AI docs, and GCP Vertex AI/BigQuery.",
+    "stage": "pre"
+  },
+  {
+    "question": "Why should you always install Python packages inside a virtual environment (.venv) rather than using sudo pip install?",
+    "options": [
+      "Virtual environments make matrix multiplication 10x faster",
+      "sudo pip install can overwrite OS-level Python packages and cause dependency conflicts across projects",
+      "Hugging Face blocks downloads outside virtual environments",
+      "Git only tracks files inside .venv"
+    ],
+    "correct": 1,
+    "explanation": "Isolating dependencies inside .venv prevents version collisions and protects system utilities that rely on the OS Python installation.",
+    "stage": "pre"
+  },
+  {
+    "question": "In the route-aware preflight architecture, when does run_preflight(route_name) return a non-zero exit code?",
+    "options": [
+      "Whenever an optional GPU is not detected",
+      "Only when one or more probes in route.required return Result(ok=False, ...)",
+      "Whenever gcloud is not installed on the beginner route",
+      "Every time the script is run without arguments"
+    ],
+    "correct": 1,
+    "explanation": "Required probes gate the exit code for a given route, whereas optional probes report READY or INFO so learners on CPU-only or offline machines are never blocked.",
+    "stage": "post"
+  },
+  {
+    "question": "Which command launches the 4-Tab Interactive FastAPI Web Studio once your production virtual environment is active?",
+    "options": [
+      "python -m cli.rag_cli destroy",
+      "python -m cli.rag_cli serve --host 0.0.0.0 --port 8090",
+      "python -m cli.rag_cli evaluate",
+      "gcloud init"
+    ],
+    "correct": 1,
+    "explanation": "The 'serve' subcommand in cli/rag_cli.py starts the Uvicorn server hosting ui/app.py on port 8090.",
+    "stage": "post"
+  }
+]

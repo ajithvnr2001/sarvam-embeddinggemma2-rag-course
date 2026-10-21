@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Why can you slice the first 256 coordinates of a google/embeddinggemma-2 vector without training a separate PCA matrix?",
+    "options": [
+      "Because all neural networks naturally sort their outputs alphabetically",
+      "Because Matryoshka Representation Learning (MRL) applies nested InfoNCE contrastive losses to prefixes m in {128, 256, 512, 768} simultaneously during training, forcing coarse semantic signal into the earliest coordinates",
+      "Because coordinates 257..768 are always zero",
+      "Because Python automatically runs PCA when slicing a NumPy array"
+    ],
+    "correct": 1,
+    "explanation": "Multi-scale MRL training supervises every nested prefix simultaneously, creating a coarse-to-fine hierarchy across coordinates.",
+    "stage": "pre"
+  },
+  {
+    "question": "If z is a unit-normalized 768-D vector (||z||_2 = 1), what is true about its 256-D prefix slice z_{1:256} BEFORE re-normalization?",
+    "options": [
+      "Its L2 norm ||z_{1:256}||_2 is strictly less than 1 (unless coordinates 257..768 are all zero), so you MUST re-normalize it before computing dot-product cosine similarity",
+      "Its L2 norm is always 1.0",
+      "Its L2 norm is 3.0",
+      "It contains only integers"
+    ],
+    "correct": 0,
+    "explanation": "Dropping coordinates 257..768 removes positive squared energy sum_{i=257}^{768} z_i^2, leaving ||z_{1:256}||_2 < 1. Skipping re-normalization reintroduces magnitude distortion across documents.",
+    "stage": "pre"
+  },
+  {
+    "question": "How much vector storage and BigQuery column scan volume do you save by deploying 256-D MRL vectors instead of 768-D vectors?",
+    "options": [
+      "1.5x reduction (33% savings)",
+      "3.0x reduction (66.7% savings: 1,024 bytes vs 3,072 bytes per float32 vector)",
+      "6.0x reduction",
+      "No savings"
+    ],
+    "correct": 1,
+    "explanation": "768 / 256 = 3.0x fewer floating-point numbers per chunk, cutting memory footprint and BigQuery scan bytes by two-thirds.",
+    "stage": "post"
+  },
+  {
+    "question": "How does a Two-Stage Matryoshka Funnel achieve nearly 6x search speedup with 768-D accuracy?",
+    "options": [
+      "By deleting 80% of the documents from the database",
+      "By scanning all N chunks with compact 128-D vectors to shortlist the top-M candidates, then re-scoring only those M candidates using full 768-D vectors",
+      "By running BM25 without embeddings",
+      "By compressing strings with gzip"
+    ],
+    "correct": 1,
+    "explanation": "When M << N (e.g., M=25 out of N=1,000,000), the second stage takes negligible compute while restoring full 768-D ranking fidelity.",
+    "stage": "post"
+  }
+]

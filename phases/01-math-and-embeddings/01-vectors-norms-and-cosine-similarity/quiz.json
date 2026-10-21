@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Why does ranking documents by unnormalized dot product (q · d) fail when document lengths vary widely?",
+    "options": [
+      "Because dot product cannot handle negative numbers",
+      "Because q · d = ||q||_2 ||d||_2 cos(θ), so a long document with a huge L2 norm ||d||_2 can overpower a smaller angle θ",
+      "Because Python floats only have 8 bits of precision",
+      "Because dot product only works in 2D space"
+    ],
+    "correct": 1,
+    "explanation": "The unnormalized inner product scales linearly with the Euclidean magnitude ||d||_2 of the document vector, creating the Magnitude Trap where verbose off-topic documents outscore concise exact matches.",
+    "stage": "pre"
+  },
+  {
+    "question": "If both query vector q_hat and document vector d_hat are pre-normalized to unit L2 length (||q_hat||_2 = ||d_hat||_2 = 1), what does cosine similarity simplify to?",
+    "options": [
+      "The Euclidean sum q_hat + d_hat",
+      "The plain dot product q_hat · d_hat, because the denominator ||q_hat||_2 ||d_hat||_2 equals 1",
+      "Zero",
+      "The cross product q_hat × d_hat"
+    ],
+    "correct": 1,
+    "explanation": "On the unit hypersphere S^(d-1), both norms equal 1.0, so cosine_similarity(q_hat, d_hat) = q_hat · d_hat.",
+    "stage": "pre"
+  },
+  {
+    "question": "For two unit vectors u, v on the unit sphere (||u||_2 = ||v||_2 = 1), how is squared Euclidean distance ||u - v||_2^2 related to cosine similarity cos(θ)?",
+    "options": [
+      "||u - v||_2^2 = 2(1 - cos(θ))",
+      "||u - v||_2^2 = cos(θ)^2",
+      "They are unrelated",
+      "||u - v||_2^2 = 1 / cos(θ)"
+    ],
+    "correct": 0,
+    "explanation": "Expanding ||u - v||_2^2 = ||u||_2^2 + ||v||_2^2 - 2(u · v) = 1 + 1 - 2cos(θ) = 2(1 - cos(θ)), which proves that minimizing L2 distance on the unit sphere is identical to maximizing cosine similarity.",
+    "stage": "post"
+  },
+  {
+    "question": "Why do we add an epsilon guard (max(norm, 1e-12)) when L2-normalizing vectors in production?",
+    "options": [
+      "To increase vector dimensionality from 768 to 1024",
+      "To prevent division by zero (NaN/Inf corruption) if a degenerate or empty input produces a zero vector",
+      "To encrypt the embedding vector",
+      "To sort the vector coordinates"
+    ],
+    "correct": 1,
+    "explanation": "A single NaN row in an embedding matrix will propagate through matrix multiplication and corrupt top-K retrieval rankings.",
+    "stage": "post"
+  }
+]

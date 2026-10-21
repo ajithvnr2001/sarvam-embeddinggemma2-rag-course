@@ -1,0 +1,25 @@
+# Secrets & Environment Variables (NEVER COMMIT)
+.env
+*.env
+!*.env.example
+*.key
+*credentials*.json
+
+# Virtual environments & Python cache
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Hugging Face & Model Cache
+.cache/
+hf_cache/
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Logs
+*.log

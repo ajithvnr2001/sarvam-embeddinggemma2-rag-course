@@ -1,0 +1,739 @@
+{
+  "generated_at": "2026-10-21T08:30:01Z",
+  "gcp_project_id": "genai-511910",
+  "gcp_location": "us-central1",
+  "embedding_model": "google/embeddinggemma-2",
+  "vertex_llm": "gemini-2.5-flash",
+  "index_stats": {
+    "total_chunks": 48,
+    "code_bearing_chunks": 13,
+    "embedding_model": "google/embeddinggemma-2",
+    "selective_mode": "text_only (270M active parameters / 740M total)",
+    "precision": "bfloat16 -> float32 L2-normalized",
+    "native_dim": 768,
+    "mrl_dimensions": [
+      768,
+      512,
+      256,
+      128
+    ],
+    "encode_time_sec": 49.81,
+    "chunks_per_sec": 0.96,
+    "categories": {
+      "general": 17,
+      "text-to-speech": 4,
+      "api-core": 4,
+      "document-ai": 4,
+      "chat-llm": 19
+    }
+  },
+  "summary": {
+    "hybrid_recall_at_5": "100.0%",
+    "hybrid_mrr_at_5": 1.0,
+    "avg_context_relevance": 5.0,
+    "avg_faithfulness": 5.0,
+    "avg_completeness": 5.0
+  },
+  "strategy_benchmarks": {
+    "dense_768d": {
+      "mode": "dense",
+      "dimension": 768,
+      "compression_ratio": "1.0x",
+      "hit_at_1_pct": 100.0,
+      "recall_at_5_pct": 100.0,
+      "mrr_at_5": 1.0,
+      "avg_vector_search_ms": 0.5252
+    },
+    "dense_512d": {
+      "mode": "dense",
+      "dimension": 512,
+      "compression_ratio": "1.5x",
+      "hit_at_1_pct": 100.0,
+      "recall_at_5_pct": 100.0,
+      "mrr_at_5": 1.0,
+      "avg_vector_search_ms": 0.0775
+    },
+    "dense_256d": {
+      "mode": "dense",
+      "dimension": 256,
+      "compression_ratio": "3.0x",
+      "hit_at_1_pct": 83.3,
+      "recall_at_5_pct": 100.0,
+      "mrr_at_5": 0.9167,
+      "avg_vector_search_ms": 0.0697
+    },
+    "dense_128d": {
+      "mode": "dense",
+      "dimension": 128,
+      "compression_ratio": "6.0x",
+      "hit_at_1_pct": 66.7,
+      "recall_at_5_pct": 100.0,
+      "mrr_at_5": 0.8056,
+      "avg_vector_search_ms": 0.0695
+    },
+    "bm25_lexical": {
+      "mode": "bm25",
+      "dimension": 768,
+      "compression_ratio": "N/A",
+      "hit_at_1_pct": 83.3,
+      "recall_at_5_pct": 100.0,
+      "mrr_at_5": 0.9167,
+      "avg_vector_search_ms": 0.8137
+    },
+    "hybrid_rrf_768d": {
+      "mode": "hybrid",
+      "dimension": 768,
+      "compression_ratio": "1.0x",
+      "hit_at_1_pct": 100.0,
+      "recall_at_5_pct": 100.0,
+      "mrr_at_5": 1.0,
+      "avg_vector_search_ms": 0.6302
+    },
+    "hybrid_rrf_256d": {
+      "mode": "hybrid",
+      "dimension": 256,
+      "compression_ratio": "3.0x",
+      "hit_at_1_pct": 100.0,
+      "recall_at_5_pct": 100.0,
+      "mrr_at_5": 1.0,
+      "avg_vector_search_ms": 0.6293
+    },
+    "mrl_funnel_128_to_768": {
+      "mode": "mrl_funnel",
+      "dimension": 768,
+      "compression_ratio": "1.0x",
+      "hit_at_1_pct": 100.0,
+      "recall_at_5_pct": 100.0,
+      "mrr_at_5": 1.0,
+      "avg_vector_search_ms": 0.1402
+    }
+  },
+  "mrl_deep_comparison": {
+    "query": "How do I generate Tamil speech using bulbul:v4-flash and what sample rates and speakers are supported?",
+    "top_k": 5,
+    "dimensions": {
+      "768": {
+        "dimension": 768,
+        "compression_ratio": "1.0x",
+        "bytes_per_vector_fp32": 3072,
+        "search_ms": 0.0489,
+        "top1_chunk_id": "sarvam_0011",
+        "top1_title": "TAMIL_API_GUIDE — 2. குரல் தேர்வு (v4-flash தமிழ் — 4 குரல், நாலும் ஆண்)",
+        "top1_cosine": 0.75701,
+        "topk_overlap_with_768d": 100.0,
+        "top_hits": [
+          {
+            "rank": 1,
+            "chunk_id": "sarvam_0011",
+            "title": "TAMIL_API_GUIDE — 2. குரல் தேர்வு (v4-flash தமிழ் — 4 குரல், நாலும் ஆண்)",
+            "cosine": 0.75701
+          },
+          {
+            "rank": 2,
+            "chunk_id": "sarvam_0006",
+            "title": "HOW_IT_WAS_DONE — Phase 1 — Live-verify every claim (trust, then verify)",
+            "cosine": 0.72494
+          },
+          {
+            "rank": 3,
+            "chunk_id": "sarvam_0009",
+            "title": "TAMIL_API_GUIDE — 1. அடிப்படை: ஒரு கோரிக்கை (curl)",
+            "cosine": 0.71562
+          },
+          {
+            "rank": 4,
+            "chunk_id": "sarvam_0013",
+            "title": "README_TTS — Outputs (the actual deliverables)",
+            "cosine": 0.71483
+          },
+          {
+            "rank": 5,
+            "chunk_id": "sarvam_0010",
+            "title": "TAMIL_API_GUIDE — 1. அடிப்படை: ஒரு கோரிக்கை (curl) (Part 2)",
+            "cosine": 0.68362
+          }
+        ]
+      },
+      "512": {
+        "dimension": 512,
+        "compression_ratio": "1.5x",
+        "bytes_per_vector_fp32": 2048,
+        "search_ms": 0.0459,
+        "top1_chunk_id": "sarvam_0011",
+        "top1_title": "TAMIL_API_GUIDE — 2. குரல் தேர்வு (v4-flash தமிழ் — 4 குரல், நாலும் ஆண்)",
+        "top1_cosine": 0.76031,
+        "topk_overlap_with_768d": 80.0,
+        "top_hits": [
+          {
+            "rank": 1,
+            "chunk_id": "sarvam_0011",
+            "title": "TAMIL_API_GUIDE — 2. குரல் தேர்வு (v4-flash தமிழ் — 4 குரல், நாலும் ஆண்)",
+            "cosine": 0.76031
+          },
+          {
+            "rank": 2,
+            "chunk_id": "sarvam_0006",
+            "title": "HOW_IT_WAS_DONE — Phase 1 — Live-verify every claim (trust, then verify)",
+            "cosine": 0.73006
+          },
+          {
+            "rank": 3,
+            "chunk_id": "sarvam_0013",
+            "title": "README_TTS — Outputs (the actual deliverables)",
+            "cosine": 0.72131
+          },
+          {
+            "rank": 4,
+            "chunk_id": "sarvam_0009",
+            "title": "TAMIL_API_GUIDE — 1. அடிப்படை: ஒரு கோரிக்கை (curl)",
+            "cosine": 0.71885
+          },
+          {
+            "rank": 5,
+            "chunk_id": "sarvam_0005",
+            "title": "HOW_IT_WAS_DONE — Phase 0 — Read the docs (source of truth)",
+            "cosine": 0.69227
+          }
+        ]
+      },
+      "256": {
+        "dimension": 256,
+        "compression_ratio": "3.0x",
+        "bytes_per_vector_fp32": 1024,
+        "search_ms": 0.033,
+        "top1_chunk_id": "sarvam_0011",
+        "top1_title": "TAMIL_API_GUIDE — 2. குரல் தேர்வு (v4-flash தமிழ் — 4 குரல், நாலும் ஆண்)",
+        "top1_cosine": 0.79284,
+        "topk_overlap_with_768d": 100.0,
+        "top_hits": [
+          {
+            "rank": 1,
+            "chunk_id": "sarvam_0011",
+            "title": "TAMIL_API_GUIDE — 2. குரல் தேர்வு (v4-flash தமிழ் — 4 குரல், நாலும் ஆண்)",
+            "cosine": 0.79284
+          },
+          {
+            "rank": 2,
+            "chunk_id": "sarvam_0006",
+            "title": "HOW_IT_WAS_DONE — Phase 1 — Live-verify every claim (trust, then verify)",
+            "cosine": 0.75898
+          },
+          {
+            "rank": 3,
+            "chunk_id": "sarvam_0013",
+            "title": "README_TTS — Outputs (the actual deliverables)",
+            "cosine": 0.74802
+          },
+          {
+            "rank": 4,
+            "chunk_id": "sarvam_0009",
+            "title": "TAMIL_API_GUIDE — 1. அடிப்படை: ஒரு கோரிக்கை (curl)",
+            "cosine": 0.74495
+          },
+          {
+            "rank": 5,
+            "chunk_id": "sarvam_0010",
+            "title": "TAMIL_API_GUIDE — 1. அடிப்படை: ஒரு கோரிக்கை (curl) (Part 2)",
+            "cosine": 0.72465
+          }
+        ]
+      },
+      "128": {
+        "dimension": 128,
+        "compression_ratio": "6.0x",
+        "bytes_per_vector_fp32": 512,
+        "search_ms": 0.0299,
+        "top1_chunk_id": "sarvam_0011",
+        "top1_title": "TAMIL_API_GUIDE — 2. குரல் தேர்வு (v4-flash தமிழ் — 4 குரல், நாலும் ஆண்)",
+        "top1_cosine": 0.84648,
+        "topk_overlap_with_768d": 80.0,
+        "top_hits": [
+          {
+            "rank": 1,
+            "chunk_id": "sarvam_0011",
+            "title": "TAMIL_API_GUIDE — 2. குரல் தேர்வு (v4-flash தமிழ் — 4 குரல், நாலும் ஆண்)",
+            "cosine": 0.84648
+          },
+          {
+            "rank": 2,
+            "chunk_id": "sarvam_0013",
+            "title": "README_TTS — Outputs (the actual deliverables)",
+            "cosine": 0.82228
+          },
+          {
+            "rank": 3,
+            "chunk_id": "sarvam_0004",
+            "title": "HOW_IT_WAS_DONE — How Everything Was Achieved End-to-End (Build Log)",
+            "cosine": 0.8176
+          },
+          {
+            "rank": 4,
+            "chunk_id": "sarvam_0006",
+            "title": "HOW_IT_WAS_DONE — Phase 1 — Live-verify every claim (trust, then verify)",
+            "cosine": 0.81302
+          },
+          {
+            "rank": 5,
+            "chunk_id": "sarvam_0009",
+            "title": "TAMIL_API_GUIDE — 1. அடிப்படை: ஒரு கோரிக்கை (curl)",
+            "cosine": 0.80834
+          }
+        ]
+      }
+    }
+  },
+  "rag_evaluations": [
+    {
+      "id": "q1_auth",
+      "query": "How do I authenticate with the Sarvam AI API and what HTTP header or Bearer token format is used?",
+      "retrieval_ms": 370.59,
+      "llm_latency_ms": 5280.18,
+      "total_tokens": 1129,
+      "answer_preview": "You can authenticate with the Sarvam AI API using API Subscription Keys provided by Sarvam AI [sarvam_0017].\n\nThere are two ways to include these keys in your API requests:\n\n1.  **`api-subscription-key` header**: This is the preferred method and is used in all examples in the documentation and official SDKs [sarvam_0018].\n    ```\n    api-subscription-key: YOUR_SARVAM_API_KEY\n    ```\n    [sarvam_0017], [sarvam_0015]\n\n2.  **`Authorization: Bearer` ...",
+      "full_answer": "You can authenticate with the Sarvam AI API using API Subscription Keys provided by Sarvam AI [sarvam_0017].\n\nThere are two ways to include these keys in your API requests:\n\n1.  **`api-subscription-key` header**: This is the preferred method and is used in all examples in the documentation and official SDKs [sarvam_0018].\n    ```\n    api-subscription-key: YOUR_SARVAM_API_KEY\n    ```\n    [sarvam_0017], [sarvam_0015]\n\n2.  **`Authorization: Bearer` header**: This alternative method is useful for OpenAI-compatible tooling, especially with the Chat Completions endpoint (`/v1/chat/completions`), which conventionally sends Bearer authentication [sarvam_0018].\n    ```\n    Authorization: Bearer YOUR_SARVAM_API_KEY\n    ```\n    [sarvam_0018]\n\nAuthentication failures will return an HTTP **403** status code [sarvam_0015].",
+      "sources": [
+        {
+          "chunk_id": "sarvam_0018",
+          "title": "Authentication — Bearer token (alternative)",
+          "url": "https://docs.sarvam.ai/api-reference/authentication/",
+          "score": 0.01622
+        },
+        {
+          "chunk_id": "sarvam_0017",
+          "title": "Authentication",
+          "url": "https://docs.sarvam.ai/api-reference/authentication/",
+          "score": 0.01612
+        },
+        {
+          "chunk_id": "sarvam_0015",
+          "title": "README_TTS — 2. API key setup (never hardcode)",
+          "url": "https://github.com/ajithvnr2001/sarvam-docs/blob/main/README_TTS.md",
+          "score": 0.01495
+        },
+        {
+          "chunk_id": "sarvam_0021",
+          "title": "Welcome to Sarvam AI API Reference Documentation",
+          "url": "https://docs.sarvam.ai/api-reference/",
+          "score": 0.01478
+        }
+      ],
+      "judge": {
+        "context_relevance": 5,
+        "groundedness_faithfulness": 5,
+        "answer_completeness": 5,
+        "rationale": "The retrieved context provides all the necessary details about authentication methods and header formats, and the answer accurately and completely addresses the query using only the provided information."
+      }
+    },
+    {
+      "id": "q2_tts_tamil_v4",
+      "query": "Which Tamil speakers and audio sample rates work with bulbul:v4-flash in Sarvam Text-to-Speech?",
+      "retrieval_ms": 254.67,
+      "llm_latency_ms": 3828.71,
+      "total_tokens": 2303,
+      "answer_preview": "For the `bulbul:v4-flash` model, the following Tamil speakers are known to work:\n*   `aravind_ta_suspense` [sarvam_0006, sarvam_0013]\n*   `vijay_ta_narration` [sarvam_0009, sarvam_0013]\n*   `aravind_ta_ads` [sarvam_0013]\n\nThe documentation also notes that there are \"4 male IDs\" for v4 Tamil voices [sarvam_0006].\n\nRegarding audio sample rates, `bulbul:v4-flash` supports:\n*   `22050` Hz [sarvam_0009]\n*   `44100` Hz [sarvam_0006]...",
+      "full_answer": "For the `bulbul:v4-flash` model, the following Tamil speakers are known to work:\n*   `aravind_ta_suspense` [sarvam_0006, sarvam_0013]\n*   `vijay_ta_narration` [sarvam_0009, sarvam_0013]\n*   `aravind_ta_ads` [sarvam_0013]\n\nThe documentation also notes that there are \"4 male IDs\" for v4 Tamil voices [sarvam_0006].\n\nRegarding audio sample rates, `bulbul:v4-flash` supports:\n*   `22050` Hz [sarvam_0009]\n*   `44100` Hz [sarvam_0006]",
+      "sources": [
+        {
+          "chunk_id": "sarvam_0006",
+          "title": "HOW_IT_WAS_DONE — Phase 1 — Live-verify every claim (trust, then verify)",
+          "url": "https://github.com/ajithvnr2001/sarvam-docs/blob/main/HOW_IT_WAS_DONE.md",
+          "score": 0.01604
+        },
+        {
+          "chunk_id": "sarvam_0012",
+          "title": "README_TTS — Tamil Sarvam TTS — End-to-End (Private)",
+          "url": "https://github.com/ajithvnr2001/sarvam-docs/blob/main/README_TTS.md",
+          "score": 0.01559
+        },
+        {
+          "chunk_id": "sarvam_0009",
+          "title": "TAMIL_API_GUIDE — 1. அடிப்படை: ஒரு கோரிக்கை (curl)",
+          "url": "https://github.com/ajithvnr2001/sarvam-docs/blob/main/TAMIL_API_GUIDE.md",
+          "score": 0.01539
+        },
+        {
+          "chunk_id": "sarvam_0013",
+          "title": "README_TTS — Outputs (the actual deliverables)",
+          "url": "https://github.com/ajithvnr2001/sarvam-docs/blob/main/README_TTS.md",
+          "score": 0.0152
+        }
+      ],
+      "judge": {
+        "context_relevance": 5,
+        "groundedness_faithfulness": 5,
+        "answer_completeness": 5,
+        "rationale": "The retrieved context directly contains all the necessary information about Tamil speakers and audio sample rates for the specified model, and the answer accurately extracts and presents this information with correct citations."
+      }
+    },
+    {
+      "id": "q3_voice_cloning",
+      "query": "How do I create a cloned voice and synthesize speech with Instant Voice Cloning?",
+      "retrieval_ms": 293.05,
+      "llm_latency_ms": 4096.71,
+      "total_tokens": 2209,
+      "answer_preview": "To create a cloned voice and synthesize speech with Instant Voice Cloning, you first create a saved voice using the `/voices/create` endpoint. After creating the voice, you can then generate speech using the `/voices/clone` endpoint, providing the `voice_id` of the saved voice [sarvam_0023]....",
+      "full_answer": "To create a cloned voice and synthesize speech with Instant Voice Cloning, you first create a saved voice using the `/voices/create` endpoint. After creating the voice, you can then generate speech using the `/voices/clone` endpoint, providing the `voice_id` of the saved voice [sarvam_0023].",
+      "sources": [
+        {
+          "chunk_id": "sarvam_0022",
+          "title": "Welcome to Sarvam AI API Reference Documentation — Key Features",
+          "url": "https://docs.sarvam.ai/api-reference/",
+          "score": 0.01606
+        },
+        {
+          "chunk_id": "sarvam_0006",
+          "title": "HOW_IT_WAS_DONE — Phase 1 — Live-verify every claim (trust, then verify)",
+          "url": "https://github.com/ajithvnr2001/sarvam-docs/blob/main/HOW_IT_WAS_DONE.md",
+          "score": 0.01552
+        },
+        {
+          "chunk_id": "sarvam_0007",
+          "title": "HOW_IT_WAS_DONE — Phase 2 — Half-hour thriller (single voice, v4)",
+          "url": "https://github.com/ajithvnr2001/sarvam-docs/blob/main/HOW_IT_WAS_DONE.md",
+          "score": 0.01547
+        },
+        {
+          "chunk_id": "sarvam_0023",
+          "title": "Welcome to Sarvam AI API Reference Documentation — Key Features (Part 2)",
+          "url": "https://docs.sarvam.ai/api-reference/",
+          "score": 0.01526
+        }
+      ],
+      "judge": {
+        "context_relevance": 5,
+        "groundedness_faithfulness": 5,
+        "answer_completeness": 5,
+        "rationale": "The retrieved context contains the exact technical information needed to answer the question, and the answer is directly and accurately extracted from the relevant chunk with correct citation, completely addressing the query."
+      }
+    }
+  ],
+  "multimodal_gallery": {
+    "count": 10,
+    "encode_ms": 82364.22,
+    "items": [
+      {
+        "id": "mm_img_tts",
+        "modality": "image",
+        "title": "Sarvam Bulbul v4 Flash Text-to-Speech Visual Architecture Card",
+        "description": "Visual API specification diagram for POST /text-to-speech using bulbul:v4-flash with pitch, pace, loudness, and 44.1kHz audio.",
+        "asset_path": "data/multimodal_samples/sarvam_tts_bulbul_v4_card.png",
+        "token_cost_estimate": 319
+      },
+      {
+        "id": "mm_img_stt",
+        "modality": "image",
+        "title": "Sarvam Saaras & Saarika Speech-to-Text Visual Pipeline Card",
+        "description": "Visual architecture card for Sarvam Speech-to-Text (/speech-to-text) and Speech-to-Text Translate (/speech-to-text-translate).",
+        "asset_path": "data/multimodal_samples/sarvam_stt_saaras_card.png",
+        "token_cost_estimate": 313
+      },
+      {
+        "id": "mm_img_cloning",
+        "modality": "image",
+        "title": "Sarvam Instant Voice Cloning & Dubbing Workflow Diagram",
+        "description": "Visual workflow diagram showing /voices/create and /voices/clone for instant speaker voice cloning.",
+        "asset_path": "data/multimodal_samples/sarvam_voice_cloning_card.png",
+        "token_cost_estimate": 307
+      },
+      {
+        "id": "mm_img_mrl",
+        "modality": "image",
+        "title": "Google EmbeddingGemma 2 Multimodal & Matryoshka (MRL) Architecture Diagram",
+        "description": "Visual architecture overview of EmbeddingGemma 2 (740M total params: 270M text + 170M vision + 300M audio) and MRL 768d/512d/256d/128d.",
+        "asset_path": "data/multimodal_samples/embeddinggemma2_mrl_card.png",
+        "token_cost_estimate": 322
+      },
+      {
+        "id": "mm_aud_rain",
+        "modality": "audio",
+        "title": "Cinematic Rain Ambience Bed (sfx/rain.wav)",
+        "description": "Continuous rainfall acoustic sound effect bed used in the Sarvam Tamil thriller cinematic narration pipeline.",
+        "asset_path": "data/multimodal_samples/rain.wav",
+        "duration_sec": 6.0,
+        "token_cost_estimate": 180
+      },
+      {
+        "id": "mm_aud_thunder",
+        "modality": "audio",
+        "title": "Thunder Crack Sound Effect (sfx/thunder.wav)",
+        "description": "Loud thunderclap acoustic cue triggered by [SFX: thunder] in Sarvam multi-voice story narration.",
+        "asset_path": "data/multimodal_samples/thunder.wav",
+        "duration_sec": 2.5,
+        "token_cost_estimate": 89
+      },
+      {
+        "id": "mm_aud_phone",
+        "modality": "audio",
+        "title": "Telephone Ring Cue (sfx/phone_ring.wav)",
+        "description": "Urgent midnight telephone ring sound effect triggered in the DSP Vivek Tamil thriller audio drama.",
+        "asset_path": "data/multimodal_samples/phone_ring.wav",
+        "duration_sec": 2.0,
+        "token_cost_estimate": 73
+      },
+      {
+        "id": "mm_aud_tts_narrator",
+        "modality": "audio",
+        "title": "Sarvam Bulbul v4 Tamil Narrator Speech (line_01_narrator.mp3)",
+        "description": "Synthesized Tamil speech generated by Sarvam `bulbul:v4-flash` (speaker `vijay_ta_narration`, pace 0.90): 'சென்னை மாநகரத்தின் அந்த நள்ளிரவு மழை...'",
+        "asset_path": "data/multimodal_samples/line_01_narrator.mp3",
+        "duration_sec": 6.0,
+        "token_cost_estimate": 189
+      },
+      {
+        "id": "mm_aud_tts_vivek",
+        "modality": "audio",
+        "title": "Sarvam Bulbul v4 DSP Vivek Dialogue Speech (line_03_vivek.mp3)",
+        "description": "Synthesized Tamil character dialogue generated by Sarvam `bulbul:v4-flash` (speaker `aravind_ta_suspense`, pace 0.98): 'விவேக் ஹியர்... சொல்லுங்க கோபி!'",
+        "asset_path": "data/multimodal_samples/line_03_vivek.mp3",
+        "duration_sec": 6.0,
+        "token_cost_estimate": 189
+      },
+      {
+        "id": "mm_interleaved_tts_bundle",
+        "modality": "interleaved (text+image+audio)",
+        "title": "Interleaved Sarvam TTS Spec Card + Live Tamil Speech Sample",
+        "description": "Single unified 768d vector combining text description, visual API card (<|image|>), and synthesized 16kHz Tamil speech (<|audio|>).",
+        "asset_path": "data/multimodal_samples/sarvam_tts_bulbul_v4_card.png + line_01_narrator.mp3",
+        "token_cost_estimate": 460
+      }
+    ]
+  },
+  "multimodal_benchmarks": [
+    {
+      "query": "continuous heavy rainfall storm sound effect audio",
+      "dimension": 768,
+      "latency_ms": 222.96,
+      "hits": [
+        {
+          "id": "mm_aud_rain",
+          "modality": "audio",
+          "title": "Cinematic Rain Ambience Bed (sfx/rain.wav)",
+          "description": "Continuous rainfall acoustic sound effect bed used in the Sarvam Tamil thriller cinematic narration pipeline.",
+          "asset_path": "data/multimodal_samples/rain.wav",
+          "duration_sec": 6.0,
+          "token_cost_estimate": 180,
+          "rank": 1,
+          "cosine_similarity": 0.78649,
+          "dimension": 768
+        },
+        {
+          "id": "mm_aud_thunder",
+          "modality": "audio",
+          "title": "Thunder Crack Sound Effect (sfx/thunder.wav)",
+          "description": "Loud thunderclap acoustic cue triggered by [SFX: thunder] in Sarvam multi-voice story narration.",
+          "asset_path": "data/multimodal_samples/thunder.wav",
+          "duration_sec": 2.5,
+          "token_cost_estimate": 89,
+          "rank": 2,
+          "cosine_similarity": 0.7398,
+          "dimension": 768
+        },
+        {
+          "id": "mm_aud_phone",
+          "modality": "audio",
+          "title": "Telephone Ring Cue (sfx/phone_ring.wav)",
+          "description": "Urgent midnight telephone ring sound effect triggered in the DSP Vivek Tamil thriller audio drama.",
+          "asset_path": "data/multimodal_samples/phone_ring.wav",
+          "duration_sec": 2.0,
+          "token_cost_estimate": 73,
+          "rank": 3,
+          "cosine_similarity": 0.66981,
+          "dimension": 768
+        }
+      ]
+    },
+    {
+      "query": "urgent telephone ringing sound effect in detective control room",
+      "dimension": 768,
+      "latency_ms": 277.45,
+      "hits": [
+        {
+          "id": "mm_aud_phone",
+          "modality": "audio",
+          "title": "Telephone Ring Cue (sfx/phone_ring.wav)",
+          "description": "Urgent midnight telephone ring sound effect triggered in the DSP Vivek Tamil thriller audio drama.",
+          "asset_path": "data/multimodal_samples/phone_ring.wav",
+          "duration_sec": 2.0,
+          "token_cost_estimate": 73,
+          "rank": 1,
+          "cosine_similarity": 0.8714,
+          "dimension": 768
+        },
+        {
+          "id": "mm_aud_thunder",
+          "modality": "audio",
+          "title": "Thunder Crack Sound Effect (sfx/thunder.wav)",
+          "description": "Loud thunderclap acoustic cue triggered by [SFX: thunder] in Sarvam multi-voice story narration.",
+          "asset_path": "data/multimodal_samples/thunder.wav",
+          "duration_sec": 2.5,
+          "token_cost_estimate": 89,
+          "rank": 2,
+          "cosine_similarity": 0.65221,
+          "dimension": 768
+        },
+        {
+          "id": "mm_aud_rain",
+          "modality": "audio",
+          "title": "Cinematic Rain Ambience Bed (sfx/rain.wav)",
+          "description": "Continuous rainfall acoustic sound effect bed used in the Sarvam Tamil thriller cinematic narration pipeline.",
+          "asset_path": "data/multimodal_samples/rain.wav",
+          "duration_sec": 6.0,
+          "token_cost_estimate": 180,
+          "rank": 3,
+          "cosine_similarity": 0.63648,
+          "dimension": 768
+        }
+      ]
+    },
+    {
+      "query": "Synthesized Tamil speech narration from Sarvam bulbul:v4-flash TTS API",
+      "dimension": 768,
+      "latency_ms": 313.25,
+      "hits": [
+        {
+          "id": "mm_interleaved_tts_bundle",
+          "modality": "interleaved (text+image+audio)",
+          "title": "Interleaved Sarvam TTS Spec Card + Live Tamil Speech Sample",
+          "description": "Single unified 768d vector combining text description, visual API card (<|image|>), and synthesized 16kHz Tamil speech (<|audio|>).",
+          "asset_path": "data/multimodal_samples/sarvam_tts_bulbul_v4_card.png + line_01_narrator.mp3",
+          "token_cost_estimate": 460,
+          "rank": 1,
+          "cosine_similarity": 0.85529,
+          "dimension": 768
+        },
+        {
+          "id": "mm_img_tts",
+          "modality": "image",
+          "title": "Sarvam Bulbul v4 Flash Text-to-Speech Visual Architecture Card",
+          "description": "Visual API specification diagram for POST /text-to-speech using bulbul:v4-flash with pitch, pace, loudness, and 44.1kHz audio.",
+          "asset_path": "data/multimodal_samples/sarvam_tts_bulbul_v4_card.png",
+          "token_cost_estimate": 319,
+          "rank": 2,
+          "cosine_similarity": 0.82251,
+          "dimension": 768
+        },
+        {
+          "id": "mm_aud_tts_vivek",
+          "modality": "audio",
+          "title": "Sarvam Bulbul v4 DSP Vivek Dialogue Speech (line_03_vivek.mp3)",
+          "description": "Synthesized Tamil character dialogue generated by Sarvam `bulbul:v4-flash` (speaker `aravind_ta_suspense`, pace 0.98): 'விவேக் ஹியர்... சொல்லுங்க கோபி!'",
+          "asset_path": "data/multimodal_samples/line_03_vivek.mp3",
+          "duration_sec": 6.0,
+          "token_cost_estimate": 189,
+          "rank": 3,
+          "cosine_similarity": 0.79721,
+          "dimension": 768
+        }
+      ]
+    },
+    {
+      "query": "Instant voice cloning workflow diagram /voices/create and /voices/clone",
+      "dimension": 768,
+      "latency_ms": 239.71,
+      "hits": [
+        {
+          "id": "mm_img_cloning",
+          "modality": "image",
+          "title": "Sarvam Instant Voice Cloning & Dubbing Workflow Diagram",
+          "description": "Visual workflow diagram showing /voices/create and /voices/clone for instant speaker voice cloning.",
+          "asset_path": "data/multimodal_samples/sarvam_voice_cloning_card.png",
+          "token_cost_estimate": 307,
+          "rank": 1,
+          "cosine_similarity": 0.80942,
+          "dimension": 768
+        },
+        {
+          "id": "mm_img_tts",
+          "modality": "image",
+          "title": "Sarvam Bulbul v4 Flash Text-to-Speech Visual Architecture Card",
+          "description": "Visual API specification diagram for POST /text-to-speech using bulbul:v4-flash with pitch, pace, loudness, and 44.1kHz audio.",
+          "asset_path": "data/multimodal_samples/sarvam_tts_bulbul_v4_card.png",
+          "token_cost_estimate": 319,
+          "rank": 2,
+          "cosine_similarity": 0.66429,
+          "dimension": 768
+        },
+        {
+          "id": "mm_interleaved_tts_bundle",
+          "modality": "interleaved (text+image+audio)",
+          "title": "Interleaved Sarvam TTS Spec Card + Live Tamil Speech Sample",
+          "description": "Single unified 768d vector combining text description, visual API card (<|image|>), and synthesized 16kHz Tamil speech (<|audio|>).",
+          "asset_path": "data/multimodal_samples/sarvam_tts_bulbul_v4_card.png + line_01_narrator.mp3",
+          "token_cost_estimate": 460,
+          "rank": 3,
+          "cosine_similarity": 0.6577,
+          "dimension": 768
+        }
+      ]
+    }
+  ],
+  "gcp_sync": {
+    "status": "SUCCESS",
+    "project_id": "genai-511910",
+    "location": "us-central1",
+    "gcs_uri": "gs://genai-511910-sarvam-rag/sarvam_rag/bq_vectors_256d.jsonl",
+    "bigquery_table": "genai-511910.sarvam_rag.docs_embeddings",
+    "rows_uploaded": 48,
+    "embedding_dim": 256,
+    "elapsed_sec": 18.4
+  },
+  "bigquery_vector_search": {
+    "engine": "GCP BigQuery VECTOR_SEARCH (COSINE)",
+    "table": "genai-511910.sarvam_rag.docs_embeddings",
+    "dimension": 256,
+    "top_k": 5,
+    "latency_ms": 3870.74,
+    "results": [
+      {
+        "category": "api-core",
+        "chunk_id": "sarvam_0017",
+        "content_preview": "# Authentication\n\nAll API endpoints are authenticated using API Subscription Keys provided by Sarvam AI when you sign up. Include these keys in the header of each API request as follows:\n    \n    \n    api-subscription-key: YOUR_SARVAM_API_KEY",
+        "cosine_distance": "0.11631",
+        "cosine_similarity": "0.88369",
+        "doc_path": "api-reference/authentication.md",
+        "title": "Authentication",
+        "url": "https://docs.sarvam.ai/api-reference/authentication/"
+      },
+      {
+        "category": "api-core",
+        "chunk_id": "sarvam_0019",
+        "content_preview": "### Obtaining Your API Subscription Key\n\n  1. **Sign Up** : Create an account on the [Sarvam Dashboard](https://dashboard.sarvam.ai/)\n  2. **Generate Key** : After signing up, you must manually generate your API key from the dashboard. Navigate to the API Keys section and create a new key for your account.\n  3. **Organisation Key Management** : Creating Organisational level keys is not currently supported and will be available soon.\n\n**Save your key value right away.** For security reasons, the ",
+        "cosine_distance": "0.15165",
+        "cosine_similarity": "0.84835",
+        "doc_path": "api-reference/authentication.md",
+        "title": "Authentication — Obtaining Your API Subscription Key",
+        "url": "https://docs.sarvam.ai/api-reference/authentication/"
+      },
+      {
+        "category": "api-core",
+        "chunk_id": "sarvam_0018",
+        "content_preview": "### Bearer token (alternative)\n\nThe API also accepts the same key as a standard `Authorization: Bearer` header on all endpoints:\n    \n    \n    Authorization: Bearer YOUR_SARVAM_API_KEY\n\nThis is useful with OpenAI-compatible tooling pointed at the [Chat Completions endpoint](https://docs.sarvam.ai/api/api-guides-tutorials/chat-completion/overview) (`/v1/chat/completions`), which conventionally sends Bearer auth. All examples in these docs and the official SDKs use the `api-subscription-key` heade",
+        "cosine_distance": "0.18236",
+        "cosine_similarity": "0.81764",
+        "doc_path": "api-reference/authentication.md",
+        "title": "Authentication — Bearer token (alternative)",
+        "url": "https://docs.sarvam.ai/api-reference/authentication/"
+      },
+      {
+        "category": "api-core",
+        "chunk_id": "sarvam_0016",
+        "content_preview": "# Authentication | Sarvam API Docs\n\n> Source: https://docs.sarvam.ai/api-reference/authentication/\n\n[API Reference](https://docs.sarvam.ai/api-reference/introduction)",
+        "cosine_distance": "0.20282",
+        "cosine_similarity": "0.79718",
+        "doc_path": "api-reference/authentication.md",
+        "title": "Authentication — Authentication | Sarvam API Docs",
+        "url": "https://docs.sarvam.ai/api-reference/authentication/"
+      },
+      {
+        "category": "text-to-speech",
+        "chunk_id": "sarvam_0015",
+        "content_preview": "## 2. API key setup (never hardcode)\n\n```bash\nexport SARVAM_API_KEY=\"YOUR_KEY\"\n```\n\nEvery request sends the header:\n\n```\napi-subscription-key: YOUR_KEY\n```\n\n(Auth failures return HTTP **403**, not 401, per `docs/api-reference/authentication.md`.)",
+        "cosine_distance": "0.20296",
+        "cosine_similarity": "0.79704",
+        "doc_path": "README_TTS.md",
+        "title": "README_TTS — 2. API key setup (never hardcode)",
+        "url": "https://github.com/ajithvnr2001/sarvam-docs/blob/main/README_TTS.md"
+      }
+    ]
+  }
+}

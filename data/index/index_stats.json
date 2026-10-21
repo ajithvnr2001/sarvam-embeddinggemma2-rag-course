@@ -1,0 +1,23 @@
+{
+  "total_chunks": 48,
+  "code_bearing_chunks": 13,
+  "embedding_model": "google/embeddinggemma-2",
+  "selective_mode": "text_only (270M active parameters / 740M total)",
+  "precision": "bfloat16 -> float32 L2-normalized",
+  "native_dim": 768,
+  "mrl_dimensions": [
+    768,
+    512,
+    256,
+    128
+  ],
+  "encode_time_sec": 49.81,
+  "chunks_per_sec": 0.96,
+  "categories": {
+    "general": 17,
+    "text-to-speech": 4,
+    "api-core": 4,
+    "document-ai": 4,
+    "chat-llm": 19
+  }
+}

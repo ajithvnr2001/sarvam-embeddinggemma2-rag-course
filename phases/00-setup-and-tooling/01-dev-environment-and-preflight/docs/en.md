@@ -65,7 +65,7 @@ Rather than checking every possible cloud tool up front, our preflight script gr
 Each probe returns an immutable `Result(ok: bool, detail: str)`:
 
 $$
-\text{route\_status}(R) = \bigwedge_{p \in \text{required}(R)} \text{probe}(p).\text{ok}
+\operatorname{RouteStatus}(R) = \bigwedge_{p \in \operatorname{required}(R)} \operatorname{probe}(p).\text{ok}
 $$
 
 In plain English: a route passes preflight if and only if **every required probe** for that route returns `ok = True`. Optional probes report `READY` or `INFO` without blocking your progress.

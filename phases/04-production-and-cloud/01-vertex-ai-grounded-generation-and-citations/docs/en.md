@@ -49,7 +49,7 @@ flowchart LR
 
 ### Formal Grounding Constraints
 
-Let $\mathcal{C}_K = \{c_1, c_2, \dots, c_K\}$ be the top-$K$ retrieved chunks formatted as `[Doc 1]` through `[Doc K]`. A generated response $Y = (s_1, s_2, \dots, s_M)$ consisting of $M$ factual sentences satisfies **Strict Citation Validity** if and only if:
+Let $\mathcal{C}_K = \lbrace c_1, c_2, \dots, c_K \rbrace$ be the top-$K$ retrieved chunks formatted as `[Doc 1]` through `[Doc K]`. A generated response $Y = (s_1, s_2, \dots, s_M)$ consisting of $M$ factual sentences satisfies **Strict Citation Validity** if and only if:
 
 $$
 \forall s_m \in Y,\; \exists\, i \in \text{citations}(s_m) \quad \text{such that} \quad 1 \le i \le K
@@ -58,7 +58,7 @@ $$
 and the set of **Phantom Citations** is strictly empty:
 
 $$
-\mathcal{P}(Y, K) = \bigl\{\, i \in \text{citations}(Y) \;\big|\; i < 1 \;\vee\; i > K \,\bigr\} = \emptyset
+\mathcal{P}(Y, K) = \bigl\lbrace \, i \in \text{citations}(Y) \;\big|\; i < 1 \;\vee\; i > K \,\bigr \rbrace = \emptyset
 $$
 
 | Generation Parameter | Production Value | Why It Matters for Technical RAG |

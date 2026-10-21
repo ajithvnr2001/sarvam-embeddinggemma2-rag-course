@@ -32,22 +32,22 @@ flowchart LR
 ## 2. Core Mathematical Formulas
 
 - **L2 Norm & Normalization**:
-  $$\|\mathbf{v}\|_2 = \sqrt{\sum_{i=1}^{d} v_i^2}, \qquad \hat{\mathbf{v}} = \frac{\mathbf{v}}{\max(\|\mathbf{v}\|_2, \varepsilon)}$$
+  $$\lVert \mathbf{v} \rVert_2 = \sqrt{\sum_{i=1}^{d} v_i^2}, \qquad \hat{\mathbf{v}} = \frac{\mathbf{v}}{\max(\lVert \mathbf{v} \rVert_2, \varepsilon)}$$
 
 - **Cosine Similarity & Cosine Distance**:
-  $$\text{cosine\_similarity}(\mathbf{q}, \mathbf{d}) = \frac{\mathbf{q} \cdot \mathbf{d}}{\|\mathbf{q}\|_2 \|\mathbf{d}\|_2} = \hat{\mathbf{q}} \cdot \hat{\mathbf{d}}, \qquad \text{COSINE\_DISTANCE}(\mathbf{q}, \mathbf{d}) = 1 - \text{cosine\_similarity}(\mathbf{q}, \mathbf{d})$$
+  $$\operatorname{CosineSimilarity}(\mathbf{q}, \mathbf{d}) = \frac{\mathbf{q} \cdot \mathbf{d}}{\lVert \mathbf{q} \rVert_2 \lVert \mathbf{d} \rVert_2} = \hat{\mathbf{q}} \cdot \hat{\mathbf{d}}, \qquad \operatorname{CosineDistance}(\mathbf{q}, \mathbf{d}) = 1 - \operatorname{CosineSimilarity}(\mathbf{q}, \mathbf{d})$$
 
-- **Matryoshka Representation Learning (MRL) Truncation ($k \in \{768, 512, 256, 128\}$)**:
-  $$\hat{\mathbf{v}}_{1:k} = \frac{\mathbf{v}[0:k]}{\|\mathbf{v}[0:k]\|_2}$$
+- **Matryoshka Representation Learning (MRL) Truncation ($k \in \lbrace 768, 512, 256, 128 \rbrace$)**:
+  $$\hat{\mathbf{v}}_{1:k} = \frac{\mathbf{v}[0:k]}{\lVert \mathbf{v}[0:k] \rVert_2}$$
 
 - **Okapi BM25 Sparse Score**:
-  $$\text{IDF}(t) = \ln\!\left(1 + \frac{N - n(t) + 0.5}{n(t) + 0.5}\right), \qquad \text{BM25}(q, d) = \sum_{t \in q} \text{IDF}(t) \cdot \frac{f(t, d) \cdot (k_1 + 1)}{f(t, d) + k_1 \cdot \left(1 - b + b \cdot \frac{|d|}{\text{avgdl}}\right)}$$
+  $$\operatorname{IDF}(t) = \ln\left(1 + \frac{N - n(t) + 0.5}{n(t) + 0.5}\right), \qquad \operatorname{BM25}(q, d) = \sum_{t \in q} \operatorname{IDF}(t) \cdot \frac{f(t, d) \cdot (k_1 + 1)}{f(t, d) + k_1 \cdot \left(1 - b + b \cdot \frac{\lvert d \rvert}{\operatorname{avgdl}}\right)}$$
 
 - **Reciprocal Rank Fusion (RRF)**:
-  $$\text{RRF}(d \mid q) = \frac{w_{\text{dense}}}{k_{\text{rrf}} + r_{\text{dense}}(d)} + \frac{w_{\text{bm25}}}{k_{\text{rrf}} + r_{\text{bm25}}(d)} \quad (k_{\text{rrf}} = 60)$$
+  $$\operatorname{RRF}(d \mid q) = \frac{w_{\text{dense}}}{k_{\text{rrf}} + r_{\text{dense}}(d)} + \frac{w_{\text{bm25}}}{k_{\text{rrf}} + r_{\text{bm25}}(d)} \quad (k_{\text{rrf}} = 60)$$
 
 - **Information Retrieval Evaluation Metrics (`Hit@K`, `MRR@K`, `NDCG@K`)**:
-  $$\text{Hit@}K = \frac{1}{M}\sum_{m=1}^{M} \mathbb{I}(L_{m,K} \cap R_m \neq \emptyset), \qquad \text{MRR@}K = \frac{1}{M}\sum_{m=1}^{M} \frac{1}{\text{rank}_m}, \qquad \text{NDCG@}K = \frac{\text{DCG@}K}{\text{IDCG@}K}$$
+  $$\operatorname{Hit@}K = \frac{1}{M}\sum_{m=1}^{M} \mathbb{I}(L_{m,K} \cap R_m \neq \emptyset), \qquad \operatorname{MRR@}K = \frac{1}{M}\sum_{m=1}^{M} \frac{1}{\operatorname{rank}_m}, \qquad \operatorname{NDCG@}K = \frac{\operatorname{DCG@}K}{\operatorname{IDCG@}K}$$
 
 ---
 

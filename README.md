@@ -62,7 +62,7 @@ python3 scripts/lesson_run.py --execute --strict
 
 1. **Test your intuition first** — Open the lesson's `quiz.json` and answer the two `"stage": "pre"` questions before reading.
 2. **Read `docs/en.md` top-to-bottom** — Every equation is derived from first principles and paired with its exact Python translation.
-3. **Run `code/main.py` and break it** — Change a hyperparameter ($k \in \{768, 512, 256, 128\}$, $k_1 = 1.5$, $b = 0.75$, $k_{\text{rrf}} = 60$) and observe the output.
+3. **Run `code/main.py` and break it** — Change a hyperparameter ($k \in \lbrace 768, 512, 256, 128 \rbrace$, $k_1 = 1.5$, $b = 0.75$, $k_{\text{rrf}} = 60$) and observe the output.
 4. **Complete the 3 graded exercises** — Move from `[Easy]` to `[Medium]` to `[Hard]` at the bottom of `docs/en.md`.
 5. **Ship the artifacts** — Copy `outputs/prompt-*.md` and `outputs/skill-*.md` into your production project or install all 26 artifacts into your agent with `python3 scripts/install_skills.py skills --type all --layout flat --force`.
 

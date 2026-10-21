@@ -49,13 +49,13 @@ flowchart LR
 In BigQuery Google Standard SQL, `COSINE_DISTANCE(u, v)` is defined as:
 
 $$
-\text{COSINE\_DISTANCE}(\mathbf{u}, \mathbf{v}) = 1 - \text{cosine\_similarity}(\mathbf{u}, \mathbf{v}) = 1 - \frac{\mathbf{u} \cdot \mathbf{v}}{\lVert \mathbf{u} \rVert_2 \lVert \mathbf{v} \rVert_2}
+\operatorname{CosineDistance}(\mathbf{u}, \mathbf{v}) = 1 - \operatorname{CosineSimilarity}(\mathbf{u}, \mathbf{v}) = 1 - \frac{\mathbf{u} \cdot \mathbf{v}}{\lVert \mathbf{u} \rVert_2 \lVert \mathbf{v} \rVert_2}
 $$
 
 Because $\cos\theta \in [-1, +1]$, `COSINE_DISTANCE` lies in $[0, 2]$:
-- Identical direction ($\cos\theta = 1.0$) $\implies \text{COSINE\_DISTANCE} = 0.0$
-- Orthogonal ($\cos\theta = 0.0$) $\implies \text{COSINE\_DISTANCE} = 1.0$
-- Opposite ($\cos\theta = -1.0$) $\implies \text{COSINE\_DISTANCE} = 2.0$
+- Identical direction ($\cos\theta = 1.0$) $\implies \operatorname{CosineDistance} = 0.0$
+- Orthogonal ($\cos\theta = 0.0$) $\implies \operatorname{CosineDistance} = 1.0$
+- Opposite ($\cos\theta = -1.0$) $\implies \operatorname{CosineDistance} = 2.0$
 
 Since $f(x) = 1 - x$ is strictly monotonically decreasing, **minimizing `COSINE_DISTANCE` (`ORDER BY cosine_distance ASC`) is 100% mathematically equivalent to maximizing cosine similarity (`DESC`)**:
 

@@ -55,12 +55,12 @@ During contrastive pre-training, `google/embeddinggemma-2` learns distinct regio
 
 ### 2. Attention-Mask-Aware Mean Pooling
 
-Let $\mathbf{H} = [\mathbf{h}_1, \mathbf{h}_2, \dots, \mathbf{h}_T]^\top \in \mathbb{R}^{T \times d}$ be the final-layer contextual token states for a padded sequence of length $T$, and let $\mathbf{m} = [m_1, m_2, \dots, m_T]^\top \in \{0, 1\}^T$ be the binary attention mask ($m_t = 1$ for real tokens, $m_t = 0$ for `[PAD]` tokens).
+Let $\mathbf{H} = [\mathbf{h}_1, \mathbf{h}_2, \dots, \mathbf{h}_T]^\top \in \mathbb{R}^{T \times d}$ be the final-layer contextual token states for a padded sequence of length $T$, and let $\mathbf{m} = [m_1, m_2, \dots, m_T]^\top \in \lbrace 0, 1 \rbrace^T$ be the binary attention mask ($m_t = 1$ for real tokens, $m_t = 0$ for `[PAD]` tokens).
 
 The masked mean-pooled vector $\mathbf{p} \in \mathbb{R}^d$ is:
 
 $$
-\mathbf{p} = \frac{\sum_{t=1}^{T} m_t \, \mathbf{h}_t}{\max\!\left(\sum_{t=1}^{T} m_t,\, \epsilon\right)}
+\mathbf{p} = \frac{\sum_{t=1}^{T} m_t \, \mathbf{h}_t}{\max\left(\sum_{t=1}^{T} m_t,\, \epsilon\right)}
 $$
 
 Followed immediately by unit normalization:

@@ -14,7 +14,7 @@
 By the end of this lesson, you will be able to:
 
 - Explain the multi-scale **Matryoshka Representation Learning (MRL)** contrastive training objective used by `google/embeddinggemma-2`
-- Implement runtime prefix truncation and $\ell_2$ re-normalization across $\mathcal{M} = \{768, 512, 256, 128\}$ from scratch
+- Implement runtime prefix truncation and $\ell_2$ re-normalization across $\mathcal{M} = \lbrace 768, 512, 256, 128 \rbrace$ from scratch
 - Prove why slicing a unit vector produces a sub-unit vector ($\lVert\mathbf{z}_{1:m}\rVert_2 < 1$) that **must** be re-normalized before computing inner products
 
 ---
@@ -49,16 +49,16 @@ flowchart LR
 
 ### 1. The Multi-Scale Matryoshka Loss Function
 
-Let $\mathcal{M} = \{128, 256, 512, 768\}$ be the set of nested nesting dimensions. For a full embedding vector $\mathbf{z} \in \mathbb{R}^{768}$, let $\mathbf{z}_{1:m} \in \mathbb{R}^m$ denote its first $m$ coordinates. During training, `google/embeddinggemma-2` minimizes the sum of InfoNCE contrastive losses at **every nesting dimension simultaneously**:
+Let $\mathcal{M} = \lbrace 128, 256, 512, 768 \rbrace$ be the set of nested nesting dimensions. For a full embedding vector $\mathbf{z} \in \mathbb{R}^{768}$, let $\mathbf{z}_{1:m} \in \mathbb{R}^m$ denote its first $m$ coordinates. During training, `google/embeddinggemma-2` minimizes the sum of InfoNCE contrastive losses at **every nesting dimension simultaneously**:
 
 $$
-\mathcal{L}_{\text{MRL}}(\mathbf{q}, \mathbf{d}^+, \{\mathbf{d}_j^-\}) = \sum_{m \in \mathcal{M}} c_m \cdot \mathcal{L}_{\text{InfoNCE}}\!\left(\hat{\mathbf{q}}_{1:m},\, \hat{\mathbf{d}}^+_{1:m},\, \{\hat{\mathbf{d}}^-_{j,1:m}\}\right)
+\mathcal{L}_{\text{MRL}}(\mathbf{q}, \mathbf{d}^+, \lbrace \mathbf{d}_j^- \rbrace) = \sum_{m \in \mathcal{M}} c_m \cdot \mathcal{L}_{\text{InfoNCE}}\left(\hat{\mathbf{q}}_{1:m},\, \hat{\mathbf{d}}^+_{1:m},\, \lbrace \hat{\mathbf{d}}^-_{j,1:m} \rbrace\right)
 $$
 
-where for each prefix dimension $m \in \{128, 256, 512, 768\}$:
+where for each prefix dimension $m \in \lbrace 128, 256, 512, 768 \rbrace$:
 
 $$
-\mathcal{L}_{\text{InfoNCE}}^{(m)} = -\log \frac{\exp\!\left(\frac{\hat{\mathbf{q}}_{1:m} \cdot \hat{\mathbf{d}}^+_{1:m}}{\tau}\right)}{\exp\!\left(\frac{\hat{\mathbf{q}}_{1:m} \cdot \hat{\mathbf{d}}^+_{1:m}}{\tau}\right) + \sum_{j=1}^{B-1} \exp\!\left(\frac{\hat{\mathbf{q}}_{1:m} \cdot \hat{\mathbf{d}}^-_{j,1:m}}{\tau}\right)}
+\mathcal{L}_{\text{InfoNCE}}^{(m)} = -\log \frac{\exp\left(\frac{\hat{\mathbf{q}}_{1:m} \cdot \hat{\mathbf{d}}^+_{1:m}}{\tau}\right)}{\exp\left(\frac{\hat{\mathbf{q}}_{1:m} \cdot \hat{\mathbf{d}}^+_{1:m}}{\tau}\right) + \sum_{j=1}^{B-1} \exp\left(\frac{\hat{\mathbf{q}}_{1:m} \cdot \hat{\mathbf{d}}^-_{j,1:m}}{\tau}\right)}
 $$
 
 In plain English: Because coordinates $1\dots 128$ appear in **all four** loss terms ($m=128, 256, 512, 768$), while coordinates $513\dots 768$ appear in **only one** loss term ($m=768$), gradient descent automatically packs the highest-variance semantic information into the earliest coordinates!
@@ -140,7 +140,7 @@ Open `http://localhost:8090` and switch to **Tab 2: Matryoshka (MRL) Explorer**:
 ## Ship It
 
 - **Prompt (`outputs/prompt-mrl-capacity-planner.md`)**: System prompt for sizing vector database RAM, BigQuery scan costs, and two-stage MRL retrieval funnels for any corpus scale.
-- **Skill (`outputs/skill-mrl-dimension-optimizer.md`)**: Agent skill that benchmarks an MRL embedding index across $\{768, 512, 256, 128\}$ and selects the smallest dimension that meets a target `Recall@K` or `MRR@K` SLA.
+- **Skill (`outputs/skill-mrl-dimension-optimizer.md`)**: Agent skill that benchmarks an MRL embedding index across $\lbrace 768, 512, 256, 128 \rbrace$ and selects the smallest dimension that meets a target `Recall@K` or `MRR@K` SLA.
 
 ---
 

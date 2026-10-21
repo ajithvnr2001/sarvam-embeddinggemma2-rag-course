@@ -74,7 +74,7 @@ $$
 By the law of cosines in Euclidean space, $\mathbf{q} \cdot \mathbf{d} = \lVert \mathbf{q} \rVert_2 \lVert \mathbf{d} \rVert_2 \cos\theta$. Solving for $\cos\theta$ yields **cosine similarity**:
 
 $$
-\text{cosine\_similarity}(\mathbf{q}, \mathbf{d}) = \cos(\theta) = \frac{\mathbf{q} \cdot \mathbf{d}}{\lVert \mathbf{q} \rVert_2 \lVert \mathbf{d} \rVert_2} = \frac{\sum_{i=1}^{d} q_i d_i}{\sqrt{\sum_{i=1}^{d} q_i^2} \sqrt{\sum_{i=1}^{d} d_i^2}}
+\operatorname{CosineSimilarity}(\mathbf{q}, \mathbf{d}) = \cos(\theta) = \frac{\mathbf{q} \cdot \mathbf{d}}{\lVert \mathbf{q} \rVert_2 \lVert \mathbf{d} \rVert_2} = \frac{\sum_{i=1}^{d} q_i d_i}{\sqrt{\sum_{i=1}^{d} q_i^2} \sqrt{\sum_{i=1}^{d} d_i^2}}
 $$
 
 By the **Cauchy-Schwarz inequality** ($|\mathbf{q} \cdot \mathbf{d}| \le \lVert \mathbf{q} \rVert_2 \lVert \mathbf{d} \rVert_2$), cosine similarity is strictly bounded in $[-1, +1]$:

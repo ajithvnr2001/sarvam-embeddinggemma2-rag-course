@@ -53,14 +53,14 @@ flowchart LR
 Given a corpus of $N$ documents where $n(t) = \text{df}(t)$ documents contain term $t$, the smoothed IDF score is:
 
 $$
-\text{IDF}(t) = \ln\!\left(1 + \frac{N - \text{df}(t) + 0.5}{\text{df}(t) + 0.5}\right)
+\text{IDF}(t) = \ln\left(1 + \frac{N - \text{df}(t) + 0.5}{\text{df}(t) + 0.5}\right)
 $$
 
 In plain English: if a term like `"model"` appears in every document ($\text{df}(t) = N$), its IDF drops near zero ($\ln(1 + 0.5/(N+0.5)) \approx 0$). If a term like `"saaras:v3"` appears in only 1 document out of 244, its IDF is high ($\ln(1 + 243.5/1.5) \approx 5.10$).
 
 ### 2. The Complete Okapi BM25 Equation
 
-For a query $q = \{t_1, t_2, \dots, t_m\}$ and a document $d$ with token length $|d|$ and corpus average document length $\text{avgdl} = \frac{1}{N}\sum_{i=1}^N |d_i|$:
+For a query $q = \lbrace t_1, t_2, \dots, t_m \rbrace$ and a document $d$ with token length $|d|$ and corpus average document length $\text{avgdl} = \frac{1}{N}\sum_{i=1}^N |d_i|$:
 
 $$
 \text{BM25}(q, d) = \sum_{t \in q} \text{IDF}(t) \cdot \frac{f(t, d) \cdot (k_1 + 1)}{f(t, d) + k_1 \cdot \left(1 - b + b \cdot \frac{|d|}{\text{avgdl}}\right)}
@@ -142,7 +142,7 @@ Open `http://localhost:8090` (**Tab 1: RAG Studio**):
 
 ## Exercises
 
-1. **[Easy]** In `code/main.py`, compute the BM25 TF saturation factor $\frac{f \cdot (k_1 + 1)}{f + k_1}$ (assuming $|d| = \text{avgdl}$) for $f \in \{1, 2, 5, 10, 100\}$ with $k_1 = 1.5$. Verify that even at $f = 100$, the multiplier never exceeds $k_1 + 1 = 2.5$.
+1. **[Easy]** In `code/main.py`, compute the BM25 TF saturation factor $\frac{f \cdot (k_1 + 1)}{f + k_1}$ (assuming $|d| = \text{avgdl}$) for $f \in \lbrace 1, 2, 5, 10, 100 \rbrace$ with $k_1 = 1.5$. Verify that even at $f = 100$, the multiplier never exceeds $k_1 + 1 = 2.5$.
 2. **[Medium]** Test what happens to `"hi-IN"` (Hindi BCP-47 code) and `"or-IN"` (Odia BCP-47 code) if a naive tokenizer splits on `-` and removes standard English stopwords (`"in"`, `"or"`, `"hi"`).
 3. **[Hard]** Load all 244 chunks from `data/index/chunks.jsonl` into `OkapiBM25Scratch` and print the top 15 highest-IDF technical tokens in the entire Sarvam AI documentation corpus.
 

@@ -53,7 +53,7 @@ flowchart TD
 
 ### Formal Chunking & Sub-Windowing Rules
 
-Let a cleaned Markdown document $D$ be a sequence of lines $(l_1, l_2, \dots, l_M)$. We define the **code-fence state** $f_k \in \{0, 1\}$ at line $k$ recursively:
+Let a cleaned Markdown document $D$ be a sequence of lines $(l_1, l_2, \dots, l_M)$. We define the **code-fence state** $f_k \in \lbrace 0, 1 \rbrace$ at line $k$ recursively:
 
 $$
 f_k = \begin{cases} 1 - f_{k-1} & \text{if } \text{strip}(l_k) \text{ starts with } \texttt{```} \\ f_{k-1} & \text{otherwise} \end{cases}, \quad f_0 = 0
@@ -62,7 +62,7 @@ $$
 A line $l_k$ is a true **structural section boundary** if and only if:
 
 $$
-f_k = 0 \quad \wedge \quad l_k \text{ matches } \texttt{\^{}\#\{1,3\}\textbackslash s+(.+)\$}
+f_k = 0 \quad \wedge \quad l_k \text{ matches } \texttt{\^{}\#\lbrace 1,3 \rbrace\textbackslash s+(.+)\$}
 $$
 
 If a resulting section exceeds our maximum character budget $L_{\max}$ (e.g., $1,100$ characters $\approx 275$ tokens), we sub-split along paragraph boundaries (`\n\n`) with a sliding overlap of $L_{\text{overlap}} = 150$ characters while **preserving the parent breadcrumb** (`{doc_title} — {section_heading} (Part k)`) on every sub-chunk.

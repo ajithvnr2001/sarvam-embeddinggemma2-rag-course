@@ -62,10 +62,10 @@ flowchart TD
 
 ### The Reciprocal Rank Fusion (RRF) Equation
 
-Introduced by Cormack, Clarke, and Buettcher (SIGIR 2009), **Reciprocal Rank Fusion** discards raw numerical scores altogether and fuses the 1-based ordinal ranks $\text{rank}_r(d) \in \{1, 2, \dots, N\}$ from each retriever $r \in \{\text{dense}, \text{bm25}\}$:
+Introduced by Cormack, Clarke, and Buettcher (SIGIR 2009), **Reciprocal Rank Fusion** discards raw numerical scores altogether and fuses the 1-based ordinal ranks $\text{rank}_r(d) \in \lbrace 1, 2, \dots, N \rbrace$ from each retriever $r \in \lbrace \text{dense}, \text{bm25} \rbrace$:
 
 $$
-\text{RRF}(d) = \sum_{r \in \{\text{dense}, \text{bm25}\}} \frac{w_r}{k + \text{rank}_r(d)}
+\text{RRF}(d) = \sum_{r \in \lbrace \text{dense}, \text{bm25} \rbrace} \frac{w_r}{k + \text{rank}_r(d)}
 $$
 
 In our production `src/retriever.py`, we use $k = 60$, $w_{\text{dense}} = 0.65$, and $w_{\text{bm25}} = 0.35$:

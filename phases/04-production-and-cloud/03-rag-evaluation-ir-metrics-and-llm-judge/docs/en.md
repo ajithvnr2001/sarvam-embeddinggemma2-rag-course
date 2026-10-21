@@ -53,15 +53,15 @@ flowchart TD
 
 ### 1. `Hit@K` (Binary Top-$K$ Recall Indicator)
 
-For a query set $\mathcal{Q} = \{q_1, \dots, q_M\}$, where query $q_m$ has gold relevant chunk set $R_m$ and top-$K$ retrieved list $L_{m,K} = (d_1, d_2, \dots, d_K)$:
+For a query set $\mathcal{Q} = \lbrace q_1, \dots, q_M \rbrace$, where query $q_m$ has gold relevant chunk set $R_m$ and top-$K$ retrieved list $L_{m,K} = (d_1, d_2, \dots, d_K)$:
 
 $$
-\text{Hit@}K = \frac{1}{M} \sum_{m=1}^{M} \mathbb{I}\!\left( L_{m,K} \cap R_m \neq \emptyset \right)
+\text{Hit@}K = \frac{1}{M} \sum_{m=1}^{M} \mathbb{I}\left( L_{m,K} \cap R_m \neq \emptyset \right)
 $$
 
 ### 2. Mean Reciprocal Rank (`MRR@K`)
 
-Let $\text{rank}_m \in \{1, 2, \dots, K\}$ be the 1-based position of the **first** relevant document in $L_{m,K}$ (or $\infty$ if none is present):
+Let $\text{rank}_m \in \lbrace 1, 2, \dots, K \rbrace$ be the 1-based position of the **first** relevant document in $L_{m,K}$ (or $\infty$ if none is present):
 
 $$
 \text{MRR@}K = \frac{1}{M} \sum_{m=1}^{M} \frac{1}{\text{rank}_m}
@@ -80,7 +80,7 @@ $$
 \text{DCG@}K = \sum_{i=1}^{K} \frac{\text{rel}_i}{\log_2(i + 1)}, \qquad \text{NDCG@}K = \frac{\text{DCG@}K}{\text{IDCG@}K}
 $$
 
-where $\text{rel}_i \in \{0, 1\}$ indicates whether $d_i \in R_m$, and $\text{IDCG@}K$ is the ideal DCG achieved if all $|R_m|$ relevant documents occupied the very top ranks $1 \dots \min(|R_m|, K)$.
+where $\text{rel}_i \in \lbrace 0, 1 \rbrace$ indicates whether $d_i \in R_m$, and $\text{IDCG@}K$ is the ideal DCG achieved if all $|R_m|$ relevant documents occupied the very top ranks $1 \dots \min(|R_m|, K)$.
 
 | Metric | Sensitivity to Rank `#1` vs `#5`? | Accounts for Multiple Relevant Chunks? | Sarvam Hybrid RRF Score ($K=5$) |
 | :--- | :--- | :--- | :--- |
@@ -144,7 +144,7 @@ This command executes our golden benchmark across the 244-chunk `sarvam-docs` in
 
 1. **[Easy]** Calculate by hand the `MRR@5` and `NDCG@5` when a query has 1 relevant document and it is retrieved at Rank `#2` ($\log_2(2+1) = \log_2(3) \approx 1.585$). Verify your answer with `code/main.py`.
 2. **[Medium]** Add **`Precision@K`** ($|L_{m,K} \cap R_m| / K$) and **`Recall@K`** ($|L_{m,K} \cap R_m| / |R_m|$) functions to `code/main.py`.
-3. **[Hard]** Extend `code/main.py` to support **graded relevance** ($\text{rel}_i \in \{0, 1, 2, 3\}$) in `ndcg_at_k` using the gain formula $(2^{\text{rel}_i} - 1) / \log_2(i + 1)$.
+3. **[Hard]** Extend `code/main.py` to support **graded relevance** ($\text{rel}_i \in \lbrace 0, 1, 2, 3 \rbrace$) in `ndcg_at_k` using the gain formula $(2^{\text{rel}_i} - 1) / \log_2(i + 1)$.
 
 ---
 

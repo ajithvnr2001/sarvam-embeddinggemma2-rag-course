@@ -59,7 +59,7 @@ $$
 \phi_{\text{text}}(x_{\text{text}}),\; \phi_{\text{image}}(x_{\text{img}}),\; \phi_{\text{audio}}(x_{\text{aud}}) \in \mathbb{S}^{767} \subset \mathbb{R}^{768}
 $$
 
-For a text query $q$ and a heterogeneous corpus $\mathcal{C} = \mathcal{C}_{\text{text}} \cup \mathcal{C}_{\text{image}} \cup \mathcal{C}_{\text{audio}}$, unified cross-modal similarity for any item $c \in \mathcal{C}$ with modality $m(c) \in \{\text{text}, \text{image}, \text{audio}\}$ is simply:
+For a text query $q$ and a heterogeneous corpus $\mathcal{C} = \mathcal{C}_{\text{text}} \cup \mathcal{C}_{\text{image}} \cup \mathcal{C}_{\text{audio}}$, unified cross-modal similarity for any item $c \in \mathcal{C}$ with modality $m(c) \in \lbrace \text{text}, \text{image}, \text{audio} \rbrace$ is simply:
 
 $$
 \text{score}(q, c) = \langle \phi_{\text{text}}(q),\, \phi_{m(c)}(c) \rangle = \sum_{i=1}^{768} \phi_{\text{text}}(q)_i \, \phi_{m(c)}(c)_i

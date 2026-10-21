@@ -51,7 +51,7 @@ flowchart TD
 
 ### Corpus Structural Statistics
 
-Let $D = \{d_1, d_2, \dots, d_N\}$ be our document collection ($N = 64$). For each document $d_i$, we extract four structural signals before designing our chunker:
+Let $D = \lbrace d_1, d_2, \dots, d_N \rbrace$ be our document collection ($N = 64$). For each document $d_i$, we extract four structural signals before designing our chunker:
 
 $$
 \text{profile}(d_i) = \bigl(W(d_i),\, H(d_i),\, T(d_i),\, C(d_i)\bigr)
